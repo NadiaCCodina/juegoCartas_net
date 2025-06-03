@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cryptography.KeyDerivation;
 using Microsoft.AspNetCore.Mvc;
 
-
 using juegoCartas_net.Models;
 
 namespace juegoCartas_net.Controllers
@@ -122,12 +121,15 @@ namespace juegoCartas_net.Controllers
         public ActionResult Edit(int id, Usuario u)
         {
             var vista = nameof(Edit);//de que vista provengo
-            try
-            {
+            // try
+            // {
                 if (!User.IsInRole("Administrador"))//no soy admin
                 {
+                    
                     vista = nameof(Perfil);//solo puedo ver mi perfil
                     var usuarioActual = repositorio.ObtenerPorEmail(User.Identity.Name);
+                       Console.WriteLine("¿avatar?: " +u.AvatarFile );
+                            Console.WriteLine("¿usuario id?: " +usuarioActual );
                     if (usuarioActual.Id != id)
                     {//si no es admin, solo puede modificarse él mismo
                         return RedirectToAction(nameof(Index), "Home");
@@ -136,8 +138,8 @@ namespace juegoCartas_net.Controllers
                     {
 
                         usuarioActual.Nombre = u.Nombre;
-                      
-                 
+
+
 
                         if (!string.IsNullOrWhiteSpace(u.Clave))
                         {
@@ -153,8 +155,11 @@ namespace juegoCartas_net.Controllers
                         }
 
 
-                        if (u.AvatarFile != null && u.Id > 0)
+                        if (u.AvatarFile != null)
                         {
+                            Console.WriteLine(u.AvatarFile);
+                            Console.WriteLine(usuarioActual.Id);
+                            u.Id = usuarioActual.Id;
                             string wwwPath = environment.WebRootPath;
                             string path = Path.Combine(wwwPath, "Uploads");
                             if (!Directory.Exists(path))
@@ -192,16 +197,17 @@ namespace juegoCartas_net.Controllers
 
                         u.Clave = hashed;
                     }
+                    
                      repositorio.Modificacion(u);
                     TempData["Mensaje"] = "Datos guardados correctamente";
                    return RedirectToAction(nameof(Index), "Home");
 
                 }
-            }
-            catch (Exception ex)
-            {
-                throw;
-            }
+            // }
+            // catch (Exception ex)
+            // {
+            //     throw;
+            // }
         }
 
 
@@ -219,8 +225,8 @@ namespace juegoCartas_net.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Login(LoginView login)
         {
-            try
-            {
+            // try
+            // {
                 var returnUrl = String.IsNullOrEmpty(TempData["returnUrl"] as string) ? "/Home" : TempData["returnUrl"].ToString();
                 if (ModelState.IsValid)
                 {
@@ -236,7 +242,7 @@ namespace juegoCartas_net.Controllers
                     {
                         ModelState.AddModelError("", "El email o la clave no son correctos");
                         TempData["returnUrl"] = returnUrl;
-                        return View();
+                        return RedirectToAction("Index", "Home");
                     }
 
                     var claims = new List<Claim>
@@ -258,12 +264,12 @@ namespace juegoCartas_net.Controllers
                 TempData["returnUrl"] = returnUrl;
                 return View();
             }
-            catch (Exception ex)
-            {
-                ModelState.AddModelError("", ex.Message);
-                return View();
-            }
-        }
+            // catch (Exception ex)
+            // {
+            //     ModelState.AddModelError("", ex.Message);
+            //     return View();
+            // }
+        //}
 
         [Route("salir", Name = "logout")]
         public async Task<ActionResult> Logout()

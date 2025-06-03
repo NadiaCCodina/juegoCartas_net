@@ -7,9 +7,9 @@ namespace juegoCartas_net.Models
 {
 	public enum enRoles
 	{
-		SuperAdministrador = 1,
-		Administrador = 2,
-		Empleado = 3,
+		
+		Administrador = 1,
+		
 	}
 
 	public class Usuario
