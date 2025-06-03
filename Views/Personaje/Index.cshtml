@@ -1,0 +1,151 @@
+@model IEnumerable<juegoCartas_net.Models.Personaje>
+
+@{
+	ViewData["Title"] = "Index";
+	var rnd = new Random();
+	var Pagina = ViewBag.Pagina ?? 1;
+	var TotalPaginas = ViewBag.TotalPaginas ?? 1;
+}
+
+<h1>Cuerpo</h1>
+
+<p>
+    <a asp-action="CreateDiseño" class="btn btn-success">Crear nuevo</a>
+</p>
+  <table class="table table-bordered table-hover table-striped align-middle">
+        <thead class="thead-dark">
+    
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Id)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Nombre)
+            </th>
+         
+            <th>
+                @Html.DisplayNameFor(model => model.CaraId)
+            </th>
+ 			<th>
+                @Html.DisplayNameFor(model => model.CabezaId)
+            </th>
+
+			<th>
+                @Html.DisplayNameFor(model => model.CuerpoId)
+            </th>
+			<th>
+                @Html.DisplayNameFor(model => model.Vida)
+            </th>
+			<th>
+                @Html.DisplayNameFor(model => model.Ataque)
+            </th>
+           
+			<th>
+                @Html.DisplayNameFor(model => model.Tipo)
+            </th>
+			<th>
+                @Html.DisplayNameFor(model => model.PuntosHabilidad)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Imagen)
+            </th>
+          
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+		<tr>
+			<td>
+				@Html.DisplayFor(modelItem => item.Id)
+			</td>
+			<td>
+				@Html.DisplayFor(modelItem => item.Nombre)
+			</td>
+			<td>
+				@Html.DisplayFor(modelItem => item.CaraId)
+			</td>
+
+			<td>
+				@Html.DisplayFor(modelItem => item.CabezaId)
+			</td>
+
+			<td>
+				@Html.DisplayFor(modelItem => item.CuerpoId)
+			</td>
+			<td>
+				@Html.DisplayFor(modelItem => item.Vida)
+			</td>
+			<td>
+				@Html.DisplayFor(modelItem => item.Ataque)
+			</td>
+			<th>
+                @Html.DisplayFor(model => item.Tipo)
+            </th>
+			<th>
+                @Html.DisplayFor(model => item.PuntosHabilidad)
+            </th>
+			<td>
+				@if(!String.IsNullOrEmpty(item.Imagen)) 
+				{
+					var x = item.Imagen + "?" + rnd.Next();
+					<img width="64" src="@x" />
+				}
+				else 
+				{
+					<span>Sin foto</span>
+				}
+
+			</td>
+			
+			<td>
+				<a asp-action="Edit" asp-route-id="@item.Id" title="Editar">Editar</a>&nbsp;
+				<a asp-action="Eliminar" asp-route-id="@item.Id" title="Eliminar">Eliminar</a>
+			</td>
+		</tr>
+}
+    </tbody>
+</table>
+<!-- Paginación -->
+<nav aria-label="Page navigation">
+	<ul class="pagination">
+		<!-- Botón "Anterior" -->
+		@if (Pagina > 1)
+		{
+			<li class="page-item">
+				<a class="page-link" href="~/Personaje/Lista?pagina=@(Pagina - 1)" aria-label="Anterior">
+					<i class="fa-solid fa-angles-left"></i>
+				</a>
+			</li>
+		}
+		else
+		{
+			<li class="page-item disabled">
+				<span class="page-link"><i class="fa-solid fa-angles-left"></i></span>
+			</li>
+		}
+
+		<!-- Números de página -->
+		@for (int i = 1; i <= TotalPaginas; i++)
+		{
+			<li class="page-item @(i == Pagina ? "active" : "")">
+				<a class="page-link" href="~/Personaje/Lista?pagina=@i">@i</a>
+			</li>
+		}
+		<!-- Botón "Siguiente" -->
+		@if (Pagina < TotalPaginas)
+		{
+			<li class="page-item">
+				<a class="page-link" href="~/Personaje/Lista?pagina=@(Pagina + 1)" aria-label="Siguiente">
+					<i class="fa-solid fa-angles-right"></i>
+				</a>
+			</li>
+		}
+		else
+		{
+			<li class="page-item disabled">
+				<span class="page-link"><i class="fa-solid fa-angles-right"></i></span>
+			</li>
+		}
+	</ul>
+</nav>

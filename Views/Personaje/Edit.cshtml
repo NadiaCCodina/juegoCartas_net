@@ -1,0 +1,50 @@
+@model juegoCartas_net.Models.Personaje
+@{
+    ViewData["Title"] = "Edit";
+}
+
+<h1>Create</h1>
+
+<h4>Cara</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+		<form asp-action="Edit" enctype="multipart/form-data">
+			<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+			<div class="form-group">
+				<label asp-for="Nombre" class="control-label"></label>
+				<input asp-for="Nombre" class="form-control" />
+				<span asp-validation-for="Nombre" class="text-danger"></span>
+			</div>
+			<div class="form-group">
+				<label asp-for="CaraId" class="control-label"></label>
+				<input asp-for="CaraId" class="form-control" />
+				<span asp-validation-for="CaraId" class="text-danger"></span>
+			</div>
+				<div class="form-group">
+				<label asp-for="CabezaId" class="control-label"></label>
+				<input asp-for="CabezaId" class="form-control" />
+				<span asp-validation-for="CabezaId" class="text-danger"></span>
+			</div>
+			
+				<div class="form-group">
+				<label asp-for="CuerpoId" class="control-label"></label>
+				<input asp-for="CuerpoId" class="form-control" />
+				<span asp-validation-for="CuerpoId" class="text-danger"></span>
+			</div>
+			<div class="form-group">
+				<label asp-for="ImagenFile" class="control-label"></label>
+				<input type="file" name="ImagenFile" />
+				<span asp-validation-for="ImagenFile" class="text-danger"></span>
+			</div>
+		
+			<div class="form-group">
+				<input type="submit" value="Edit" class="btn btn-primary" />
+			</div>
+		</form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>

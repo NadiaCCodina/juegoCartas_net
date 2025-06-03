@@ -1,0 +1,85 @@
+@model IEnumerable<juegoCartas_net.Models.Cara>
+
+@{
+	ViewData["Title"] = "Index";
+	var rnd = new Random();
+}
+
+<h1>Cara</h1>
+
+<p>
+	<a asp-action="Create" class="btn btn-success">Crear nuevo</a>
+</p>
+<table class="table table-bordered table-hover table-striped align-middle">
+	<thead class="thead-dark">
+
+		<tr>
+			<th>
+				@Html.DisplayNameFor(model => model.Id)
+			</th>
+			<th>
+				@Html.DisplayNameFor(model => model.Nombre)
+			</th>
+
+			<th>
+				@Html.DisplayNameFor(model => model.Caracteristica)
+			</th>
+			<th>
+				@Html.DisplayNameFor(model => model.Ataque)
+			</th>
+			<th>
+				@Html.DisplayNameFor(model => model.Tipo)
+			</th>
+			<th>
+				@Html.DisplayNameFor(model => model.Imagen)
+			</th>
+			
+
+			<th></th>
+		</tr>
+	</thead>
+	<tbody>
+		@foreach (var item in Model)
+		{
+			<tr>
+				<td>
+					@Html.DisplayFor(modelItem => item.Id)
+				</td>
+				<td>
+					@Html.DisplayFor(modelItem => item.Nombre)
+				</td>
+				<td>
+					@Html.DisplayFor(modelItem => item.Caracteristica)
+				</td>
+				<td>
+					@Html.DisplayFor(modelItem => item.Ataque)
+				</td>
+				<td>
+					@if(item.Tipo==1){
+						<p>Rango</p>
+					}else{
+						<p>Mele</p>
+					}
+					@Html.DisplayFor(modelItem => item.Tipo)
+				</td>
+				<td>
+					@if (!String.IsNullOrEmpty(item.Imagen))
+					{
+						var x = item.Imagen + "?" + rnd.Next();
+						<img width="32" src="@x" />
+					}
+					else
+					{
+						<span>Sin foto</span>
+					}
+
+				</td>
+
+				<td>
+					<a asp-action="Edit" asp-route-id="@item.Id" title="Editar">Editar</a>&nbsp;
+					<a asp-action="Eliminar" asp-route-id="@item.Id" title="Eliminar">Eliminar</a>
+				</td>
+			</tr>
+		}
+	</tbody>
+</table>

@@ -1,0 +1,74 @@
+@model juegoCartas_net.Models.Personaje
+@{
+	ViewData["Title"] = "Create";
+	var listaCaras = (IList<Cara>)ViewBag.Caras;
+	var listaCabezas = (IList<Cabeza>)ViewBag.Cabezas;
+	var listaCuerpo = (IList<Cuerpo>)ViewBag.Cuerpos;
+}
+
+<h1>Create</h1>
+
+<h4>Cara</h4>
+<hr />
+<div class="row">
+	<div class="col-md-4">
+		<form asp-action="CreatePersonajeNuevo" enctype="multipart/form-data">
+			<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+			<div class="form-group">
+				<label asp-for="Nombre" class="control-label"></label>
+				<input asp-for="Nombre" class="form-control" required />
+				<span asp-validation-for="Nombre" class="text-danger"></span>
+			</div>
+
+			<div class="form-group">
+				<label class="control-label">Cara</label>
+				<select class="form-control" name="CaraId" required>
+					@foreach (var item in listaCaras)
+					{
+						<option value="@item.Id">@item.Nombre @item.Id</option>
+					}
+				</select>
+				<span asp-validation-for="CaraId" class="text-danger"></span>
+			</div>
+
+			<div class="form-group">
+				<label class="control-label">Cabeza</label>
+				<select class="form-control" name="CabezaId" required>
+					@foreach (var item in listaCabezas)
+					{
+						<option value="@item.Id">@item.Nombre @item.Id</option>
+					}
+				</select>
+				<span asp-validation-for="CabezaId" class="text-danger"></span>
+			</div>
+
+
+			<div class="form-group">
+				<label class="control-label">Cuerpos</label>
+				<select class="form-control" name="CuerpoId" required>
+					@foreach (var item in listaCuerpo)
+					{
+						<option value="@item.Id">@item.Nombre @item.Id</option>
+					}
+				</select>
+				<span asp-validation-for="CuerpoId" class="text-danger"></span>
+			</div>
+
+
+	
+			<div class="form-group">
+				<label asp-for="ImagenFile" class="control-label"></label>
+				<input type="file" name="ImagenFile" />
+				<span asp-validation-for="ImagenFile" class="text-danger"></span>
+			</div>
+
+			<div class="form-group">
+				<input type="submit" value="CreatePersonajeNuevo" class="btn btn-primary" />
+			</div>
+		</form>
+	</div>
+</div>
+
+<div>
+	<a asp-action="Index">Back to List</a>
+</div>
