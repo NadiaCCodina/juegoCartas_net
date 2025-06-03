@@ -16,13 +16,16 @@ namespace juegoCartas_net.Controllers
         private readonly IWebHostEnvironment environment;
         private readonly IRepositorioUsuario repositorio;
          private readonly IRepositorioCarta repoCarta;
+          private readonly IRepositorioMazo repoMazo;
 
-        public UsuarioController(IConfiguration configuration, IWebHostEnvironment environment, IRepositorioUsuario repositorio, IRepositorioCarta repoCarta)
+
+        public UsuarioController(IConfiguration configuration, IWebHostEnvironment environment, IRepositorioUsuario repositorio, IRepositorioCarta repoCarta, IRepositorioMazo repoMazo)
         {
             this.configuration = configuration;
             this.environment = environment;
             this.repositorio = repositorio;
-             this.repoCarta = repoCarta;
+            this.repoCarta = repoCarta;
+             this.repoMazo = repoMazo;
         }
         // [Route("[controller]/Index/")]
         // [Authorize(Policy = "Administrador")]
@@ -35,13 +38,6 @@ namespace juegoCartas_net.Controllers
             return View(usuario);
         }
 
-        // public ActionResult Perfil()
-        // {
-        //     var usuarios = repositorio.ObtenerTodos();
-        //     return View(usuarios);
-        // }
-        // GET: Usuarios/Create
-        // [Authorize(Policy = "Administrador")]
         public ActionResult Create()
         {
             ViewBag.Roles = Usuario.ObtenerRoles();
@@ -54,10 +50,10 @@ namespace juegoCartas_net.Controllers
         // [Authorize(Policy = "Administrador")]
         public ActionResult Create(Usuario u)
         {
-            if (!ModelState.IsValid)
-                return View();
-            try
-            {
+            // if (!ModelState.IsValid)
+            //     return View();
+            // try
+            // {
                 string hashed = Convert.ToBase64String(KeyDerivation.Pbkdf2(
                                 password: u.Clave,
                                 salt: System.Text.Encoding.ASCII.GetBytes(configuration["Salt"]),
@@ -67,33 +63,39 @@ namespace juegoCartas_net.Controllers
                 u.Clave = hashed;
                
                 var nbreRnd = Guid.NewGuid();//posible nombre aleatorio
+              
                 int res = repositorio.Alta(u);
-                if (u.AvatarFile != null && u.Id > 0)
+                  Mazo m = new Mazo
                 {
-                    string wwwPath = environment.WebRootPath;
-                    string path = Path.Combine(wwwPath, "Uploads");
-                    if (!Directory.Exists(path))
-                    {
-                        Directory.CreateDirectory(path);
-                    }
-                    //Path.GetFileName(u.AvatarFile.FileName);//este nombre se puede repetir
-                    string fileName = "avatar_" + u.Id + Path.GetExtension(u.AvatarFile.FileName);
-                    string pathCompleto = Path.Combine(path, fileName);
-                    u.Avatar = Path.Combine("/Uploads", fileName);
-                    // Esta operación guarda la foto en memoria en la ruta que necesitamos
-                    using (FileStream stream = new FileStream(pathCompleto, FileMode.Create))
-                    {
-                        u.AvatarFile.CopyTo(stream);
-                    }
-                    repositorio.Modificacion(u);
-                }
-                return RedirectToAction(nameof(Index));
-            }
-            catch (Exception ex)
+                    UsuarioId = u.Id,
+
+                };
+                int respMazo = repoMazo.Alta(m);
+                if (u.AvatarFile != null && u.Id > 0)
             {
-                ViewBag.Roles = Usuario.ObtenerRoles();
-                return View();
+                string wwwPath = environment.WebRootPath;
+                string path = Path.Combine(wwwPath, "Uploads");
+                if (!Directory.Exists(path))
+                {
+                    Directory.CreateDirectory(path);
+                }
+
+                string fileName = "avatar_" + u.Id + Path.GetExtension(u.AvatarFile.FileName);
+                string pathCompleto = Path.Combine(path, fileName);
+                u.Avatar = Path.Combine("/Uploads", fileName);
+                using (FileStream stream = new FileStream(pathCompleto, FileMode.Create))
+                {
+                    u.AvatarFile.CopyTo(stream);
+                }
+                repositorio.Modificacion(u);
             }
+               return RedirectToAction("Index", "Home");
+            // }
+            // catch (Exception ex)
+            // {
+            //     ViewBag.Roles = Usuario.ObtenerRoles();
+            //     return View();
+            // }
         }
         // GET: Usuarios/Edit/5
         // [Authorize]
@@ -120,10 +122,10 @@ namespace juegoCartas_net.Controllers
         // [Authorize]
         public ActionResult Edit(int id, Usuario u)
         {
-            var vista = nameof(Edit);//de que vista provengo
-            // try
-            // {
-                if (!User.IsInRole("Administrador"))//no soy admin
+            var vista = nameof(Edit);
+            try
+            {
+                if (!User.IsInRole("Administrador"))
                 {
                     
                     vista = nameof(Perfil);//solo puedo ver mi perfil
@@ -203,11 +205,11 @@ namespace juegoCartas_net.Controllers
                    return RedirectToAction(nameof(Index), "Home");
 
                 }
-            // }
-            // catch (Exception ex)
-            // {
-            //     throw;
-            // }
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
         }
 
 
@@ -225,8 +227,8 @@ namespace juegoCartas_net.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Login(LoginView login)
         {
-            // try
-            // {
+            try
+            {
                 var returnUrl = String.IsNullOrEmpty(TempData["returnUrl"] as string) ? "/Home" : TempData["returnUrl"].ToString();
                 if (ModelState.IsValid)
                 {
@@ -264,12 +266,12 @@ namespace juegoCartas_net.Controllers
                 TempData["returnUrl"] = returnUrl;
                 return View();
             }
-            // catch (Exception ex)
-            // {
-            //     ModelState.AddModelError("", ex.Message);
-            //     return View();
-            // }
-        //}
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("", ex.Message);
+                return View();
+            }
+        }
 
         [Route("salir", Name = "logout")]
         public async Task<ActionResult> Logout()

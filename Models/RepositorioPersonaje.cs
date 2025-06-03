@@ -71,7 +71,7 @@ namespace juegoCartas_net.Models
             Personaje? p = null;
             MySqlConnection conn = ObtenerConexion();
             {
-                string sql = @" SELECT `id`, `caraId`, `cuerpoId`, `cabezaId`, `imagen`, `nombre` FROM `Personaje` WHERE id=@id";
+                string sql = @" SELECT `id`, `caraId`, `cuerpoId`, `cabezaId`, `imagen`, `nombre`, puntos_habilidad FROM `Personaje` WHERE id=@id";
                 using (var command = new MySqlCommand(sql, conn))
                 {
                     command.Parameters.AddWithValue("@id", id);
@@ -88,6 +88,7 @@ namespace juegoCartas_net.Models
                             CabezaId = reader.GetInt32("cabezaId"),
                             Imagen = reader.GetString("imagen"),
                             Nombre = reader.GetString("nombre"),
+                         PuntosHabilidad = reader.GetInt32("puntos_habilidad"),
                         };
                     }
 

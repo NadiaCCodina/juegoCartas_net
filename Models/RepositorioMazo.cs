@@ -12,7 +12,7 @@ namespace juegoCartas_net.Models
 
         }
 
-        public int Alta(Usuario u)
+        public int Alta(Mazo u)
         {
            	int res = -1;
 			MySqlConnection conn = ObtenerConexion();
@@ -22,7 +22,7 @@ namespace juegoCartas_net.Models
 				using (var command = new MySqlCommand(sql, conn))
 				{
 					command.CommandType = CommandType.Text;
-					command.Parameters.AddWithValue("@usuario_id", u.Id);
+					command.Parameters.AddWithValue("@usuario_id", u.UsuarioId);
 					command.Parameters.AddWithValue("@puntos_habilidad", 25);
 					res = Convert.ToInt32(command.ExecuteScalar());
 					u.Id = res;
@@ -32,10 +32,6 @@ namespace juegoCartas_net.Models
 			return res;
         }
 
-        public int Alta(Mazo p)
-        {
-            throw new NotImplementedException();
-        }
 
         public int Baja(int id)
         {
@@ -47,9 +43,24 @@ namespace juegoCartas_net.Models
             throw new NotImplementedException();
         }
 
-        public int Modificacion(Mazo p)
+        public int Modificacion(Mazo m)
         {
-            throw new NotImplementedException();
+           int res = -1;
+			MySqlConnection conn = ObtenerConexion();
+			{
+				string sql = "UPDATE `mazo` SET `puntos_habilidad`= @puntos_habilidad WHERE id=  @id";
+				using (var command = new MySqlCommand(sql, conn))
+				{
+					
+					command.Parameters.AddWithValue("@puntos_habilidad", m.PuntosHabilidad);
+                    command.Parameters.AddWithValue("@id", m.Id);	
+					command.CommandType = CommandType.Text;
+
+					res = command.ExecuteNonQuery();
+
+				}
+			}
+			return res;
         }
 
         public Mazo ObtenerPorId(int id)
@@ -74,9 +85,10 @@ namespace juegoCartas_net.Models
                     if (reader.Read())
                     {
                       m = new Mazo
-                        {
-                            Id = reader.GetInt32(0),
-                            UsuarioId = reader.GetInt32("usuario_id"),
+                      {
+                          Id = reader.GetInt32(0),
+                          UsuarioId = reader.GetInt32("usuario_id"),
+                              PuntosHabilidad = reader.GetInt32("puntos_habilidad"),
                              };
                     
                     }
@@ -99,5 +111,7 @@ namespace juegoCartas_net.Models
         {
             throw new NotImplementedException();
         }
+
+        
     }
 }

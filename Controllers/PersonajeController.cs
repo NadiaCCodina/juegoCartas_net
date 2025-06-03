@@ -1,5 +1,9 @@
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authorization;
 using juegoCartas_net.Models;
 
 namespace juegoCartas_net.Controllers
@@ -13,8 +17,11 @@ namespace juegoCartas_net.Controllers
         private readonly IRepositorioCuerpo repoCuerpo;
         private readonly IRepositorioCabeza repoCabeza;
         private readonly IRepositorioCara repoCara;
+         private readonly IRepositorioUsuario repoUsuario;
+  private readonly IRepositorioMazo repoMazo;
+        public PersonajeController(IConfiguration configuration, IWebHostEnvironment environment, IRepositorioPersonaje repositorio, IRepositorioCuerpo repoCuerpo,
+        IRepositorioCabeza repoCabeza, IRepositorioCara repoCara, IRepositorioUsuario repoUsuario, IRepositorioMazo repoMazo
 
-        public PersonajeController(IConfiguration configuration, IWebHostEnvironment environment, IRepositorioPersonaje repositorio, IRepositorioCuerpo repoCuerpo, IRepositorioCabeza repoCabeza, IRepositorioCara repoCara
 )
         {
             this.configuration = configuration;
@@ -23,6 +30,8 @@ namespace juegoCartas_net.Controllers
             this.repoCuerpo = repoCuerpo;
             this.repoCabeza = repoCabeza;
             this.repoCara = repoCara;
+            this.repoUsuario = repoUsuario;
+             this.repoMazo = repoMazo;
 
 
 
@@ -33,7 +42,9 @@ namespace juegoCartas_net.Controllers
             var personaje = repositorio.ObtenerTodos();
             return View(personaje);
         } 
-        
+
+
+          [Authorize(Policy = "Administrador")]
         	[Route("[controller]/Lista")]
 		public ActionResult Lista(int pagina=1)
 		{
@@ -59,7 +70,7 @@ namespace juegoCartas_net.Controllers
 			}
 		}
 
-        
+           [Authorize(Policy = "Administrador")]
                public ActionResult Create()
         {
             var personaje = repositorio.ObtenerTodos();
@@ -75,9 +86,11 @@ namespace juegoCartas_net.Controllers
 
             });
         }
+     
         public ActionResult CreatePersonaje()
         {
-
+            string email = User.Identity.Name;
+            ViewBag.mazo = repoMazo.ObtenerPorEmailUsuario(email);
             return View();
         }
 
@@ -119,9 +132,9 @@ namespace juegoCartas_net.Controllers
             });
         }
         // POST: Cabeza/Create
-        // [HttpPost]
-        // [ValidateAntiForgeryToken]
-        // [Authorize(Policy = "Administrador")]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize(Policy = "Administrador")]
 
            public ActionResult CreateDiseño()
         {
