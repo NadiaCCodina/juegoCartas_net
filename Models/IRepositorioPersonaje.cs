@@ -12,5 +12,6 @@ namespace juegoCartas_net.Models
         public Personaje ObtenerPorParte(int caraId, int cabezaId, int cuerpoId);
         public IList<Personaje> ObtenerLista(int paginaNro = 1, int tamPagina = 10);
         public int ObtenerCantidad();
+        public IList<Personaje> BuscarPorNombre(string nombre);
     }
 }

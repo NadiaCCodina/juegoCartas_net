@@ -54,7 +54,7 @@ namespace juegoCartas_net.Models
                     command.Parameters.AddWithValue("@cabezaId", entidad.CabezaId);
                     command.Parameters.AddWithValue("@imagen", entidad.Imagen);
                     command.Parameters.AddWithValue("@nombre", entidad.Nombre);
-                     command.Parameters.AddWithValue("@puntos_habilidad", entidad.PuntosHabilidad);
+                    command.Parameters.AddWithValue("@puntos_habilidad", entidad.PuntosHabilidad);
                     command.Parameters.AddWithValue("@id", entidad.Id);
                     command.CommandType = CommandType.Text;
 
@@ -71,7 +71,12 @@ namespace juegoCartas_net.Models
             Personaje? p = null;
             MySqlConnection conn = ObtenerConexion();
             {
-                string sql = @" SELECT `id`, `caraId`, `cuerpoId`, `cabezaId`, `imagen`, `nombre`, puntos_habilidad FROM `Personaje` WHERE id=@id";
+                string sql = @" SELECT p.id, `caraId`, `cuerpoId`, `cabezaId`, p.imagen, p.nombre, Cuerpo.vida, Cara.tipo, Cabeza.ataque,  puntos_habilidad
+                    FROM `Personaje` p
+                    Join Cabeza cabeza on cabeza.id = p.cabezaId 
+                    Join Cuerpo cuerpo on cuerpo.id = p.cuerpoId
+                    Join Cara cara on cara.id = p.caraId
+                     WHERE p.id=@id";
                 using (var command = new MySqlCommand(sql, conn))
                 {
                     command.Parameters.AddWithValue("@id", id);
@@ -88,7 +93,10 @@ namespace juegoCartas_net.Models
                             CabezaId = reader.GetInt32("cabezaId"),
                             Imagen = reader.GetString("imagen"),
                             Nombre = reader.GetString("nombre"),
-                         PuntosHabilidad = reader.GetInt32("puntos_habilidad"),
+                            Vida = reader.GetInt32("vida"),
+                            Tipo = reader.GetInt32("tipo"),
+                            Ataque = reader.GetInt32("ataque"),
+                            PuntosHabilidad = reader.GetInt32("puntos_habilidad"),
                         };
                     }
 
@@ -248,5 +256,49 @@ namespace juegoCartas_net.Models
             return entidad;
         }
 
+
+	public IList<Personaje> BuscarPorNombre(string nombre)
+		{
+			MySqlConnection conn = ObtenerConexion();
+			List<Personaje> res = new List<Personaje>();
+			Personaje? p = null;
+			nombre = "%" + nombre + "%";
+
+			{
+				string sql = @"	SELECT p.id, `caraId`, `cuerpoId`, `cabezaId`, p.imagen, p.nombre, Cuerpo.vida,
+                 Cara.tipo, Cabeza.ataque,  puntos_habilidad
+                    FROM `Personaje` p
+                    Join Cabeza cabeza on cabeza.id = p.cabezaId 
+                    Join Cuerpo cuerpo on cuerpo.id = p.cuerpoId
+                    Join Cara cara on cara.id = p.caraId
+					WHERE p.nombre LIKE  @nombre";
+				using (var command = new MySqlCommand(sql, conn))
+				{
+					command.CommandType = CommandType.Text;
+					command.Parameters.AddWithValue("@nombre", nombre);
+
+					var reader = command.ExecuteReader();
+					while (reader.Read())
+					{
+						p = new Personaje
+						{
+						 Id = reader.GetInt32("id"),
+                            CaraId = reader.GetInt32("caraId"),
+                            CuerpoId = reader.GetInt32("cuerpoId"),
+                            CabezaId = reader.GetInt32("cabezaId"),
+                            Imagen = reader.GetString("imagen"),
+                            Nombre = reader.GetString("nombre"),
+                            Vida = reader.GetInt32("vida"),
+                            Tipo = reader.GetInt32("tipo"),
+                            Ataque = reader.GetInt32("ataque"),
+                            PuntosHabilidad = reader.GetInt32("puntos_habilidad"),
+						};
+						res.Add(p);
+					}
+
+				}
+			}
+			return res;
+		}
     }
 }

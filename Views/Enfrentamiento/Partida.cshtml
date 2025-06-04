@@ -8,11 +8,11 @@
 }
 
 <div class="container mt-5">
-    <h2 class="text-center text-light mb-4">¡Comienza la Partida!</h2>
+    <h2 class="text-center  mb-4">¡Comienza la Partida!</h2>
     <div class="row justify-content-between">
         <!-- Retador -->
-        <div class="col-md-5 bg-dark p-3 rounded text-light">
-            <h4 class="text-center mb-3">Tus Cartas</h4>
+        <div class="col-md-5 bg-dark p-3 rounded ">
+            <h4 class="text-center text-light mb-3">Tus Cartas</h4>
             <div class="d-flex flex-wrap justify-content-center gap-3">
                 @foreach (var carta in cartasRetador)
                 {
@@ -27,7 +27,7 @@
         </div>
 
         <!-- Contrincante -->
-        <div class="col-md-5 bg-secondary p-3 rounded text-light">
+        <div class="col-md-5 bg-secondary p-3 rounded">
             <h4 class="text-center mb-3">Cartas del Contrincante: @usuarioRandom.Nombre</h4>
             <div class="d-flex flex-wrap justify-content-center gap-3">
                 @foreach (var carta in cartasContrincante)
@@ -48,7 +48,7 @@
         <form method="post" asp-action="AceptarPartida" asp-controller="Enfrentamiento">
             <input type="hidden" name="retadorId" value="@Model?.Id" />
             <input type="hidden" name="contrincanteId" value="@usuarioRandom.Id" />
-            <button type="submit" class="btn btn-success btn-lg">Aceptar Partida</button>
+            <button type="submit" class="btn btn-dark btn-lg">Aceptar Partida</button>
         </form>
     </div>
 </div>

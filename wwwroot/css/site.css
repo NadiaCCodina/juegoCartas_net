@@ -20,3 +20,8 @@ html {
 body {
   margin-bottom: 60px;
 }
+
+
+.select2-container--bootstrap4 .select2-selection {
+  cursor: pointer;
+}

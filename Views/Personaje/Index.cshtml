@@ -7,11 +7,21 @@
 	var TotalPaginas = ViewBag.TotalPaginas ?? 1;
 }
 
-<h1>Cuerpo</h1>
+<h1>Personajes</h1>
+<label class="control-label">Personaje</label>
+<div class="custom-select">
 
+			<select class="custom-select" id="Personaje" name="PersonajeId" required>
+				<option></option>
+			</select>
+		</div>
+		
+		<div>
 <p>
     <a asp-action="CreateDiseño" class="btn btn-success">Crear nuevo</a>
 </p>
+		</div>
+
   <table class="table table-bordered table-hover table-striped align-middle">
         <thead class="thead-dark">
     
@@ -149,3 +159,58 @@
 		}
 	</ul>
 </nav>
+
+
+@section Scripts {
+
+	<script type="text/javascript">
+		$(document).ready(function () {
+
+			$('#Personaje').select2({
+				language: "es",
+				theme: 'bootstrap4',  // Aplica el tema de Bootstrap
+									 @* width: '100%'  *@
+				placeholder: "Buscar Personaje...",
+
+				minimumInputLength: 3,// Realiza la búsqueda después de 3 caracteres
+				maximumInputLength: 10,// Limita la entrada a 10 caracteres
+				ajax: {
+				delay: 250,
+				dataType: "json",
+				cache: true,// Habilita el cache para evitar peticiones repetidas
+				//url: '/Propietarios/Buscar',
+				url: function (params) {
+					let q = params.term ? encodeURIComponent(params.term) : "";
+					return `/Personaje/Buscarjson/${q}`;
+				},/*
+															data: function (params) {
+																var query = {
+																	q: params.term,
+																}
+																return query;
+															},*/
+				processResults: function (res) {
+					return {
+						results: res.datos.map(i => ({ id: i.id, text: `${i.nombre} ${i.apellido}` }))
+					};
+				}
+			}
+								});
+		@* var idOriginal = +"@Model?.PersonajeId";
+
+			var textoOriginal = "@Model?.Inqui?.Nombre" + ' ' + "@Model?.Inqui?.Apellido";
+			if (idOriginal && textoOriginal) {
+				var option = new Option(textoOriginal, idOriginal, true, true);
+				$(".Personaje").append(option).trigger('change');
+			} *@
+											});
+	</script>
+	<style>
+		.select2-search__field {
+			width: 100% !important;
+			visibility: visible;
+			display: block;
+
+		}
+	</style>
+	}

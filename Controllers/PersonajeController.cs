@@ -17,8 +17,8 @@ namespace juegoCartas_net.Controllers
         private readonly IRepositorioCuerpo repoCuerpo;
         private readonly IRepositorioCabeza repoCabeza;
         private readonly IRepositorioCara repoCara;
-         private readonly IRepositorioUsuario repoUsuario;
-  private readonly IRepositorioMazo repoMazo;
+        private readonly IRepositorioUsuario repoUsuario;
+        private readonly IRepositorioMazo repoMazo;
         public PersonajeController(IConfiguration configuration, IWebHostEnvironment environment, IRepositorioPersonaje repositorio, IRepositorioCuerpo repoCuerpo,
         IRepositorioCabeza repoCabeza, IRepositorioCara repoCara, IRepositorioUsuario repoUsuario, IRepositorioMazo repoMazo
 
@@ -31,47 +31,47 @@ namespace juegoCartas_net.Controllers
             this.repoCabeza = repoCabeza;
             this.repoCara = repoCara;
             this.repoUsuario = repoUsuario;
-             this.repoMazo = repoMazo;
+            this.repoMazo = repoMazo;
 
 
 
         }
- [Authorize(Policy = "Administrador")]
-   public ActionResult Index()
+        [Authorize(Policy = "Administrador")]
+        public ActionResult Index()
         {
             var personaje = repositorio.ObtenerTodos();
             return View(personaje);
-        } 
+        }
 
 
-          [Authorize(Policy = "Administrador")]
-        	[Route("[controller]/Lista")]
-		public ActionResult Lista(int pagina=1)
-		{
-			try
-			{
-				var tamaño = 5;
-				var lista = repositorio.ObtenerLista(Math.Max(pagina, 1), tamaño);
-				ViewBag.Pagina = pagina;
-				var total = repositorio.ObtenerCantidad();
-				ViewBag.TotalPaginas = total % tamaño == 0 ? total / tamaño : total / tamaño + 1;
-				// TempData es para pasar datos entre acciones
-				// ViewBag/Data es para pasar datos del controlador a la vista
-				// Si viene alguno valor por el tempdata, lo paso al viewdata/viewbag
-				ViewBag.Id = TempData["Id"];
-				if (TempData.ContainsKey("Mensaje"))
-					ViewBag.Mensaje = TempData["Mensaje"];
-                   return View("Index", lista);
-				
-			}
-			catch (Exception ex)
-			{// Poner breakpoints para detectar errores
-				throw;
-			}
-		}
+        [Authorize(Policy = "Administrador")]
+        [Route("[controller]/Lista")]
+        public ActionResult Lista(int pagina = 1)
+        {
+            try
+            {
+                var tamaño = 5;
+                var lista = repositorio.ObtenerLista(Math.Max(pagina, 1), tamaño);
+                ViewBag.Pagina = pagina;
+                var total = repositorio.ObtenerCantidad();
+                ViewBag.TotalPaginas = total % tamaño == 0 ? total / tamaño : total / tamaño + 1;
+                // TempData es para pasar datos entre acciones
+                // ViewBag/Data es para pasar datos del controlador a la vista
+                // Si viene alguno valor por el tempdata, lo paso al viewdata/viewbag
+                ViewBag.Id = TempData["Id"];
+                if (TempData.ContainsKey("Mensaje"))
+                    ViewBag.Mensaje = TempData["Mensaje"];
+                return View("Index", lista);
 
-           [Authorize(Policy = "Administrador")]
-               public ActionResult Create()
+            }
+            catch (Exception ex)
+            {// Poner breakpoints para detectar errores
+                throw;
+            }
+        }
+
+        [Authorize(Policy = "Administrador")]
+        public ActionResult Create()
         {
             var personaje = repositorio.ObtenerTodos();
             var cara = repoCara.ObtenerTodos();
@@ -86,7 +86,7 @@ namespace juegoCartas_net.Controllers
 
             });
         }
-     
+
         public ActionResult CreatePersonaje()
         {
             string email = User.Identity.Name;
@@ -110,18 +110,18 @@ namespace juegoCartas_net.Controllers
 
             });
         }
-  public IActionResult cambio(int cara, int cabeza, int cuerpo)
+        public IActionResult cambio(int cara, int cabeza, int cuerpo)
         {
             var personaje = repositorio.ObtenerPorParte(cara, cabeza, cuerpo);
-         
+
             return Json(new
             {
-              
+
                 personajejson = personaje,
 
             });
         }
-   [HttpGet]
+        [HttpGet]
         public IActionResult ObtenerPersonaje()
         {
             var personaje = repositorio.ObtenerPorParte(1, 1, 1);
@@ -136,7 +136,7 @@ namespace juegoCartas_net.Controllers
         [ValidateAntiForgeryToken]
         [Authorize(Policy = "Administrador")]
 
-           public ActionResult CreateDiseño()
+        public ActionResult CreateDiseño()
         {
             ViewBag.Caras = repoCara.ObtenerTodos();
             ViewBag.Cabezas = repoCabeza.ObtenerTodos();
@@ -145,7 +145,7 @@ namespace juegoCartas_net.Controllers
         }
 
         [HttpPost]
-         [Authorize(Policy = "Administrador")]
+        [Authorize(Policy = "Administrador")]
         public ActionResult CreatePersonajeNuevo(Personaje c)
         {
             int puntoHabilidad = 0;
@@ -156,45 +156,45 @@ namespace juegoCartas_net.Controllers
 
             try
             {
-            if (c.ImagenFile != null)
-            {
-                string wwwPath = environment.WebRootPath;
-                string path = Path.Combine(wwwPath, "Uploads");
-                if (!Directory.Exists(path))
+                if (c.ImagenFile != null)
                 {
-                    Directory.CreateDirectory(path);
+                    string wwwPath = environment.WebRootPath;
+                    string path = Path.Combine(wwwPath, "Uploads");
+                    if (!Directory.Exists(path))
+                    {
+                        Directory.CreateDirectory(path);
+                    }
+
+                    string fileName = "personaje_" + Guid.NewGuid().ToString() + Path.GetExtension(c.ImagenFile.FileName);
+                    string pathCompleto = Path.Combine(path, fileName);
+                    c.Imagen = Path.Combine("/Uploads", fileName).Replace("\\", "/");
+
+                    using (FileStream stream = new FileStream(pathCompleto, FileMode.Create))
+                    {
+                        c.ImagenFile.CopyTo(stream);
+                    }
                 }
-
-                string fileName = "personaje_" + Guid.NewGuid().ToString() + Path.GetExtension(c.ImagenFile.FileName);
-                string pathCompleto = Path.Combine(path, fileName);
-                c.Imagen = Path.Combine("/Uploads", fileName).Replace("\\", "/");
-
-                using (FileStream stream = new FileStream(pathCompleto, FileMode.Create))
+                else
                 {
-                    c.ImagenFile.CopyTo(stream);
+                    ModelState.AddModelError("ImagenFile", "Debe subir una imagen.");
+                    return RedirectToAction(nameof(Create));
                 }
+                int tipo = repoCara.ObtenerPorId(c.CaraId).Tipo;
+                int ataque = repoCabeza.ObtenerPorId(c.CabezaId).Ataque;
+                int vida = repoCuerpo.ObtenerPorId(c.CuerpoId).Vida;
+                puntoHabilidad = ataque + vida + tipo;
+                c.PuntosHabilidad = puntoHabilidad;
+                repositorio.Alta(c);
+                return RedirectToAction(nameof(Index));
             }
-            else
-            {
-                ModelState.AddModelError("ImagenFile", "Debe subir una imagen.");
-                return RedirectToAction(nameof(Create));
-            }
-            int tipo = repoCara.ObtenerPorId(c.CaraId).Tipo;
-            int ataque = repoCabeza.ObtenerPorId(c.CabezaId).Ataque;
-            int vida = repoCuerpo.ObtenerPorId(c.CuerpoId).Vida;
-            puntoHabilidad = ataque + vida + tipo;
-            c.PuntosHabilidad = puntoHabilidad;
-            repositorio.Alta(c);
-            return RedirectToAction(nameof(Index));
-        }
             catch (Exception ex)
             {
                 ModelState.AddModelError("", "Error al crear el personaje: " + ex.Message);
-                  return RedirectToAction(nameof(CreatePersonaje));
-             }
+                return RedirectToAction(nameof(CreatePersonaje));
+            }
         }
-    [Authorize(Policy = "Administrador")]
-  public ActionResult Edit(int id)
+        [Authorize(Policy = "Administrador")]
+        public ActionResult Edit(int id)
         {
 
             try
@@ -207,40 +207,55 @@ namespace juegoCartas_net.Controllers
                 throw;
             }
         }
-        	[HttpPost]
-		[ValidateAntiForgeryToken]
-		 [Authorize(Policy = "Administrador")]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize(Policy = "Administrador")]
         public ActionResult Edit(int id, Personaje entidad)
-		{
-			
-			Personaje c = null;
-			try
-			{
-                 int puntoHabilidad = 0;
-				c = repositorio.ObtenerPorId(id);
-		
-				c.Nombre = entidad.Nombre;
+        {
+
+            Personaje c = null;
+            try
+            {
+                int puntoHabilidad = 0;
+                c = repositorio.ObtenerPorId(id);
+
+                c.Nombre = entidad.Nombre;
                 c.CaraId = entidad.CaraId;
                 c.CabezaId = entidad.CabezaId;
                 c.CuerpoId = entidad.CuerpoId;
-				c.ImagenFile = entidad.ImagenFile;	
-                 int tipo = repoCara.ObtenerPorId(c.CaraId).Tipo;
+                c.ImagenFile = entidad.ImagenFile;
+                int tipo = repoCara.ObtenerPorId(c.CaraId).Tipo;
                 int ataque = repoCabeza.ObtenerPorId(c.CabezaId).Ataque;
                 int vida = repoCuerpo.ObtenerPorId(c.CuerpoId).Vida;
                 puntoHabilidad = ataque + vida + tipo;
-                c.PuntosHabilidad = puntoHabilidad;		
-				repositorio.Modificacion(c);
-				TempData["Mensaje"] = "Datos guardados correctamente";
-				return RedirectToAction(nameof(Index));
+                c.PuntosHabilidad = puntoHabilidad;
+                repositorio.Modificacion(c);
+                TempData["Mensaje"] = "Datos guardados correctamente";
+                return RedirectToAction(nameof(Index));
+            }
+            catch (Exception ex)
+            {
+
+                ModelState.AddModelError("", "Error al editar: " + ex.Message);
+                return RedirectToAction(nameof(CreatePersonaje));
+            }
+        }
+
+  [Route("[controller]/Buscarjson/{q}", Name = "BuscarPersonajeJson")]
+		public ActionResult Buscarjson(string q)
+		{
+			try
+			{
+				var res = repositorio.BuscarPorNombre(q);
+
+				
+				 return Json(new { Datos = res });
 			}
 			catch (Exception ex)
 			{
-				
-                ModelState.AddModelError("", "Error al editar: " + ex.Message);
-                  return RedirectToAction(nameof(CreatePersonaje));
+				return Json(new { Error = ex.Message });
 			}
 		}
-
 
     }
 }

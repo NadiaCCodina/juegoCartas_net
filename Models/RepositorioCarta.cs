@@ -93,27 +93,26 @@ namespace juegoCartas_net.Models
             MySqlConnection conn = ObtenerConexion();
             {
                 string sql = @"
-					SELECT 
-    c.id AS carta_id, 
-    c.personaje_id, 
-    c.mazo_id, 
-    c.nivel, 
-    p.puntos_habilidad,  
-    p.imagen, 
-    p.nombre, 
-    cuerpo.vida, 
-    cara.tipo, 
-    cabeza.ataque
-FROM (
-    SELECT carta.id 
-    FROM carta
-    JOIN mazo m ON carta.mazo_id = m.id
-    JOIN usuario u ON m.usuario_id = u.id
-    WHERE u.id =@id
-    ORDER BY RAND()
-    LIMIT 3
-) AS t2
-JOIN carta c ON c.id = t2.id
+				SELECT 
+                    c.id AS carta_id, 
+                    c.personaje_id, 
+                    c.mazo_id, 
+                    c.nivel, 
+                    p.puntos_habilidad,  
+                    p.imagen, 
+                    p.nombre, 
+                    cuerpo.vida, 
+                    cara.tipo, 
+                    cabeza.ataque
+                FROM (
+                    SELECT carta.id 
+                FROM carta
+                JOIN mazo m ON carta.mazo_id = m.id
+                JOIN usuario u ON m.usuario_id = u.id
+                WHERE u.id =@id
+                ORDER BY RAND()
+                LIMIT 3) AS t2
+                JOIN carta c ON c.id = t2.id
 JOIN mazo m ON c.mazo_id = m.id
 JOIN usuario u ON m.usuario_id = u.id
 JOIN personaje p ON c.personaje_id = p.id
