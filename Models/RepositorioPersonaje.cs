@@ -209,7 +209,7 @@ namespace juegoCartas_net.Models
             MySqlConnection conn = ObtenerConexion();
             {
                 string sql = @"
-					SELECT p.id, `caraId`, `cuerpoId`, `cabezaId`, p.imagen, p.nombre, cuerpo.vida, cara.tipo, cabeza.ataque
+					SELECT p.id, `caraId`, `cuerpoId`, `cabezaId`, p.imagen, p.nombre, cuerpo.vida, cara.tipo, cabeza.ataque, puntos_habilidad
                     FROM `Personaje` p
                     Join Cabeza cabeza on cabeza.id = p.cabezaId 
                     Join Cuerpo cuerpo on cuerpo.id = p.cuerpoId
@@ -238,6 +238,7 @@ namespace juegoCartas_net.Models
                             Vida = reader.GetInt32("vida"),
                             Tipo = reader.GetInt32("tipo"),
                             Ataque = reader.GetInt32("ataque"),
+                            PuntosHabilidad = reader.GetInt32("puntos_habilidad"),
                         };
 
                     }

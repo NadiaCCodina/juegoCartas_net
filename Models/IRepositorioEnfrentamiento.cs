@@ -7,9 +7,8 @@ using System.Threading.Tasks;
 
 namespace juegoCartas_net.Models
 {
-    public interface IRepositorioCarta : IRepositorio<Carta>
+    public interface IRepositorioEnfrentamiento : IRepositorio<Enfrentamiento>
     {
-        public IList<Carta> ObtenerPorIdUsuario(int id);
-        public IList<Carta> ObtenerPorIdUsuarioRandom(int id);
+      
     }
 }

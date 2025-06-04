@@ -1,9 +1,13 @@
 using juegoCartas_net.Models;
 using Microsoft.AspNetCore.Mvc;
 
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authorization;
 namespace juegoCartas_net.Controllers
-{
 
+{
+ [Authorize(Policy = "Administrador")]
     public class CabezaController : Controller
     {
         private readonly IConfiguration configuration;
@@ -34,9 +38,9 @@ namespace juegoCartas_net.Controllers
 
 
         // POST: Cabeza/Create
-        // [HttpPost]
-        // [ValidateAntiForgeryToken]
-        // [Authorize(Policy = "Administrador")]
+         [HttpPost]
+        [ValidateAntiForgeryToken]
+       
         [HttpPost]
         public ActionResult Create(Cabeza c)
         {
@@ -80,17 +84,18 @@ namespace juegoCartas_net.Controllers
                 return View(c);
             }
         }
-
+ 
         public ActionResult Edit(int id)
         {
             try
             {
                 var entidad = repositorio.ObtenerPorId(id);
-                return View(entidad);//pasa el modelo a la vista
+                return View(entidad);
             }
             catch (Exception ex)
-            {//poner breakpoints para detectar errores
-                throw;
+            {
+                 ModelState.AddModelError("", "Error al editar la Cabeza: " + ex.Message);
+                return View(id);
             }
         }
         	[HttpPost]
@@ -114,7 +119,8 @@ namespace juegoCartas_net.Controllers
 			}
 			catch (Exception ex)
 			{
-				throw;
+				 ModelState.AddModelError("", "Error al crear la Cabeza: " + ex.Message);
+                return View(entidad);
 			}
 		}
 

@@ -3,7 +3,6 @@
   ViewData["Title"] = "3D Flip Card";
   Layout = "~/Views/Shared/_Layout.cshtml";
   var listaCartas = ViewBag.Cartas;
-  string tipo= null;
 }
 
 <div class="conteiner-usuario">
@@ -16,49 +15,79 @@
       <p class="title">Jugador</p>
       <p>Harvard University</p>
       <input id="id" type= "hidden" value=@Model.Id />
-      <a class="btn btn-dark" asp-action="Edit" asp-route-id="@Model.Id" title="Editar"> Modificar Perfil</a>&nbsp;
     
     </div>
   </div>
 </div>
-<div><a asp-controller="Enfrentamiento" class="btn btn-dark" asp-action="Cartas" asp-route-id="@Model.Id" title="Cartas"> Jugar</a>&nbsp;</div> 
-<div class="container-cartas">
-  @foreach (var car in listaCartas)
-  {
-    <div class="wrapper">
-      <div class="card front-face">
-        <img src="@car.Imagen" />
-      </div>
-      <div class="card back-face">
-        <img src="@Model.Avatar" />
+<form method="post" asp-action="Partida" asp-controller="Enfrentamiento">
+  <div class="container-cartas">
+ @foreach (var car in listaCartas)
+{
+  <div class="wrapper">
+    <div class="card front-face" value="@car.Id" data-carta-id="@car.Id">
+      <img src="@car.Imagen" />
 
-        <div class="info">
+    </div>
 
-        </div>
-         
-        @if (@car.Tipo == 1) {
-          tipo = "Mele";
-        }else{
-          tipo = "Rango";
-        }
-        <h2>@car.PuntosHabilidad</h2>
-        <h6>Vida @car.Vida</h6>
-        <h6>Ataque @car.Ataque</h6>
-        <h6>Tipo @tipo</h6>
-        <h6>@car.PersonajeNombre</h6>
-
-
+    <div class="card back-face" id="carta-@car.Id">
+      <img src="@Model.Avatar" />
+      <div class="info">
+        <h2>@car.PersonajeNombre</h2>
+        <label>
+          <input type="checkbox" class="carta-checkbox" name="cartasSeleccionadas" value="@car.Id" data-carta-id="@car.Id" />
+          Seleccionar
+        </label>
       </div>
     </div>
-  }
-
-
+  </div>
+}
+<div style="text-align: center; margin-top: 20px;">
+  <button type="submit" class="btn btn-primary">Jugar</button>
 </div>
+
+</form>
+@section Scripts {
+<script>
+  const maxSeleccion = 3;
+  const checkboxes = document.querySelectorAll('.carta-checkbox');
+
+  checkboxes.forEach(cb => {
+    cb.addEventListener('change', () => {
+      const seleccionadas = document.querySelectorAll('.carta-checkbox:checked');
+
+      // Limitar a 3 cartas seleccionadas
+      if (seleccionadas.length > maxSeleccion) {
+        cb.checked = false;
+        alert("Solo puedes seleccionar hasta 3 cartas.");
+        return;
+      }
+
+      // Obtener la carta asociada al checkbox
+      const cartaId = cb.dataset.cartaId; // el atributo data-carta-id
+      const carta = document.getElementById(`carta-${cartaId}`);
+
+      // Agregar o quitar la clase visual
+      if (cb.checked) {
+        carta.classList.add("selected");   // 👉 pinta el borde
+      } else {
+        carta.classList.remove("selected");  // 👉 quita el borde
+      }
+    });
+  });
+</script>
+}
+
 
 @section Styles {
   <link rel="stylesheet" href="~/css/style.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" />
   <style>
+  .card.selected {
+    border: 4px solid #1cc7d0;
+    box-shadow: 10px 10px 10px #ffffff;
+    transition: all 0.3s ease;
+  }
+
     .container-cartas {
       display: flex;
       flex-wrap: wrap;
@@ -211,7 +240,19 @@
   color: grey;
   margin-bottom: 5px;
 }
-
+.container {
+  display: block;
+  position: relative;
+  padding-left: 35px;
+  margin-bottom: 12px;
+  cursor: pointer;
+  font-size: 22px;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
   </style>
+
 
 }

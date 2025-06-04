@@ -50,10 +50,10 @@ namespace juegoCartas_net.Controllers
         // [Authorize(Policy = "Administrador")]
         public ActionResult Create(Usuario u)
         {
-            // if (!ModelState.IsValid)
-            //     return View();
-            // try
-            // {
+            if (!ModelState.IsValid)
+                return View();
+            try
+            {
                 string hashed = Convert.ToBase64String(KeyDerivation.Pbkdf2(
                                 password: u.Clave,
                                 salt: System.Text.Encoding.ASCII.GetBytes(configuration["Salt"]),
@@ -90,12 +90,12 @@ namespace juegoCartas_net.Controllers
                 repositorio.Modificacion(u);
             }
                return RedirectToAction("Index", "Home");
-            // }
-            // catch (Exception ex)
-            // {
-            //     ViewBag.Roles = Usuario.ObtenerRoles();
-            //     return View();
-            // }
+            }
+            catch (Exception ex)
+            {
+                ViewBag.Roles = Usuario.ObtenerRoles();
+                return View();
+            }
         }
         // GET: Usuarios/Edit/5
         // [Authorize]

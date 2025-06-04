@@ -1,10 +1,11 @@
 
 using juegoCartas_net.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace juegoCartas_net.Controllers
 {
-
+ [Authorize(Policy = "Administrador")]
     public class CuerpoController : Controller
     {
         private readonly IConfiguration configuration;

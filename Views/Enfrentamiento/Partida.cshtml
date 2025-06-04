@@ -1,0 +1,54 @@
+@model juegoCartas_net.Models.Enfrentamiento
+@{
+    ViewData["Title"] = "Partida";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var cartasRetador = ViewBag.CartasRetador as List<juegoCartas_net.Models.Carta>;
+    var cartasContrincante = ViewBag.CartasContrincante as List<juegoCartas_net.Models.Carta>;
+    var usuarioRandom = ViewBag.UsuarioRandom;
+}
+
+<div class="container mt-5">
+    <h2 class="text-center text-light mb-4">¡Comienza la Partida!</h2>
+    <div class="row justify-content-between">
+        <!-- Retador -->
+        <div class="col-md-5 bg-dark p-3 rounded text-light">
+            <h4 class="text-center mb-3">Tus Cartas</h4>
+            <div class="d-flex flex-wrap justify-content-center gap-3">
+                @foreach (var carta in cartasRetador)
+                {
+                    <div class="card" style="width: 8rem;">
+                        <img src="@carta.Imagen" class="card-img-top" alt="carta" />
+                        <div class="card-body text-center p-2">
+                            <p class="card-text">@carta.PersonajeNombre</p>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+
+        <!-- Contrincante -->
+        <div class="col-md-5 bg-secondary p-3 rounded text-light">
+            <h4 class="text-center mb-3">Cartas del Contrincante: @usuarioRandom.Nombre</h4>
+            <div class="d-flex flex-wrap justify-content-center gap-3">
+                @foreach (var carta in cartasContrincante)
+                {
+                    <div class="card" style="width: 8rem;">
+                        <img src="@carta.Imagen" class="card-img-top" alt="carta" />
+                        <div class="card-body text-center p-2">
+                            <p class="card-text">@carta.PersonajeNombre</p>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+
+    <!-- Botón Aceptar -->
+    <div class="text-center mt-4">
+        <form method="post" asp-action="AceptarPartida" asp-controller="Enfrentamiento">
+            <input type="hidden" name="retadorId" value="@Model?.Id" />
+            <input type="hidden" name="contrincanteId" value="@usuarioRandom.Id" />
+            <button type="submit" class="btn btn-success btn-lg">Aceptar Partida</button>
+        </form>
+    </div>
+</div>

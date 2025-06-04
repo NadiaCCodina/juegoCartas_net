@@ -37,7 +37,7 @@ namespace juegoCartas_net.Controllers
         // POST: Cabeza/Create
         // [HttpPost]
         [ValidateAntiForgeryToken]
-        // [Authorize(Policy = "Administrador")]
+   
         [HttpPost]
         public ActionResult CrearCarta(int personajeId)
         {
@@ -49,8 +49,7 @@ namespace juegoCartas_net.Controllers
                 string email = User.Identity.Name;
                 Console.WriteLine("Método CrearCarta EMAIL." + email);
 
-                //int usuarioActualId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
-                // Console.WriteLine("UsuarioActualId: " + usuarioActualId);
+            
                 Mazo mazoId = repoMazo.ObtenerPorEmailUsuario(email);
 
                 Carta c = new Carta
@@ -62,7 +61,7 @@ namespace juegoCartas_net.Controllers
                 };
                 int puntosPersonaje = repoPersonaje.ObtenerPorId(personajeId).PuntosHabilidad;
                 var puntos = mazoId.PuntosHabilidad - puntosPersonaje;
-                if (puntosPersonaje <= puntos)
+               if (puntos >= 0)
                 {
                     Mazo m = new Mazo
                     {

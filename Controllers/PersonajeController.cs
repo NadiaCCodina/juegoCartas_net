@@ -36,7 +36,7 @@ namespace juegoCartas_net.Controllers
 
 
         }
-
+ [Authorize(Policy = "Administrador")]
    public ActionResult Index()
         {
             var personaje = repositorio.ObtenerTodos();
@@ -143,17 +143,19 @@ namespace juegoCartas_net.Controllers
             ViewBag.Cuerpos = repoCuerpo.ObtenerTodos();
             return View();
         }
+
         [HttpPost]
+         [Authorize(Policy = "Administrador")]
         public ActionResult CreatePersonajeNuevo(Personaje c)
         {
             int puntoHabilidad = 0;
-            // if (!ModelState.IsValid)
-            // {
-            //     return View(c);
-            // }
+            if (!ModelState.IsValid)
+            {
+                return View(c);
+            }
 
-            // try
-            // {
+            try
+            {
             if (c.ImagenFile != null)
             {
                 string wwwPath = environment.WebRootPath;
@@ -184,29 +186,30 @@ namespace juegoCartas_net.Controllers
             c.PuntosHabilidad = puntoHabilidad;
             repositorio.Alta(c);
             return RedirectToAction(nameof(Index));
-            }
-            // catch (Exception ex)
-            // {
-            //     ModelState.AddModelError("", "Error al crear la Cabeza: " + ex.Message);
-            //       return RedirectToAction(nameof(CreatePersonaje));
-            //  }
-        //}
+        }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("", "Error al crear el personaje: " + ex.Message);
+                  return RedirectToAction(nameof(CreatePersonaje));
+             }
+        }
+    [Authorize(Policy = "Administrador")]
   public ActionResult Edit(int id)
         {
-            
+
             try
             {
                 var entidad = repositorio.ObtenerPorId(id);
                 return View(entidad);//pasa el modelo a la vista
             }
             catch (Exception ex)
-            {//poner breakpoints para detectar errores
+            {
                 throw;
             }
         }
         	[HttpPost]
 		[ValidateAntiForgeryToken]
-		
+		 [Authorize(Policy = "Administrador")]
         public ActionResult Edit(int id, Personaje entidad)
 		{
 			
@@ -232,7 +235,9 @@ namespace juegoCartas_net.Controllers
 			}
 			catch (Exception ex)
 			{
-				throw;
+				
+                ModelState.AddModelError("", "Error al editar: " + ex.Message);
+                  return RedirectToAction(nameof(CreatePersonaje));
 			}
 		}
 

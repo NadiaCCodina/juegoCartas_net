@@ -14,6 +14,7 @@ builder.Services.AddScoped<IRepositorioPersonaje, RepositorioPersonaje>();
 builder.Services.AddScoped<IRepositorioUsuario, RepositorioUsuario>();
 builder.Services.AddScoped<IRepositorioCarta, RepositorioCarta>();
 builder.Services.AddScoped<IRepositorioMazo, RepositorioMazo>();
+builder.Services.AddScoped<IRepositorioEnfrentamiento, RepositorioEnfrentamiento>();
 
 var configuration = builder.Configuration;
 

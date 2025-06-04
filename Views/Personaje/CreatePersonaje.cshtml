@@ -3,7 +3,7 @@
     ViewData["Title"] = "Create";
  var mazo = ViewBag.mazo;
 }
-<h1 class="text-white text-center">Cantidad disponible: @mazo.PuntosHabilidad</h1>
+<h1 class="text-white text-center">Monedas disponibles: @mazo.PuntosHabilidad</h1>
 <div class="container mt-4">
     <div class="row">
         <!-- caras  -->
@@ -270,6 +270,7 @@
                                 <h6 class="text-dark">Ataque: ${personaje.ataque}</h6>
                                 <h6 class="text-dark">Habilidad: ${tipo}</h6>
                                 <h6 class="text-dark">Vida: ${personaje.vida}</h6>
+                                <h6 class="text-dark">Valor: ${personaje.puntosHabilidad}</h6>
                                 <input id="idCaraPersonaje" type="hidden" value="${personaje.caraId}" />
                                 <input id="idCabezaPersonaje" type="hidden" value="${personaje.cabezaId}" />
                                 <input id="idCuerpoPersonaje" type="hidden" value="${personaje.cuerpoId}" />

@@ -49,7 +49,104 @@ namespace juegoCartas_net.Models
 
         public Carta ObtenerPorId(int id)
         {
-            throw new NotImplementedException();
+             Carta? e = null;
+			    MySqlConnection conn = ObtenerConexion();
+			{
+				string sql = @" SELECT carta.id, `personaje_id`, `mazo_id`, carta.nivel, p.puntos_habilidad,  p.imagen, p.nombre, cuerpo.vida, cara.tipo, cabeza.ataque
+                    FROM `carta`
+                    join mazo m on `mazo_id` = m.id
+                    join usuario u on m.usuario_id = u.id
+                    join personaje p on `personaje_id` = p.id
+                    Join Cabeza cabeza on cabeza.id = p.cabezaId 
+                    Join Cuerpo cuerpo on cuerpo.id = p.cuerpoId
+                    Join Cara cara on cara.id = p.caraId
+                    WHERE carta.id =@id";
+				   using (var command = new MySqlCommand(sql, conn))
+				{
+					command.Parameters.AddWithValue("@id", id);
+					command.CommandType = CommandType.Text;
+					
+					var reader = command.ExecuteReader();
+					if (reader.Read())
+					{
+						e = new Carta
+						{
+							  Id = reader.GetInt32(0),
+                            PersonajeId = reader.GetInt32("personaje_id"),
+                            MazoId = reader.GetInt32("mazo_id"),
+                            Imagen = reader.GetString("imagen"),
+                            PersonajeNombre = reader.GetString("nombre"),
+                            PuntosHabilidad = reader.GetInt32(4),
+                            Vida = reader.GetInt32("vida"),
+                            Ataque = reader.GetInt32("ataque"),
+                            Tipo = reader.GetInt32("tipo"),		
+						};
+					}
+				
+				}
+			}
+			return e;
+        }
+ public IList<Carta> ObtenerPorIdUsuarioRandom(int id)
+        {
+            IList<Carta> res = new List<Carta>();
+            MySqlConnection conn = ObtenerConexion();
+            {
+                string sql = @"
+					SELECT 
+    c.id AS carta_id, 
+    c.personaje_id, 
+    c.mazo_id, 
+    c.nivel, 
+    p.puntos_habilidad,  
+    p.imagen, 
+    p.nombre, 
+    cuerpo.vida, 
+    cara.tipo, 
+    cabeza.ataque
+FROM (
+    SELECT carta.id 
+    FROM carta
+    JOIN mazo m ON carta.mazo_id = m.id
+    JOIN usuario u ON m.usuario_id = u.id
+    WHERE u.id =@id
+    ORDER BY RAND()
+    LIMIT 3
+) AS t2
+JOIN carta c ON c.id = t2.id
+JOIN mazo m ON c.mazo_id = m.id
+JOIN usuario u ON m.usuario_id = u.id
+JOIN personaje p ON c.personaje_id = p.id
+JOIN cabeza cabeza ON cabeza.id = p.cabezaId
+JOIN cuerpo cuerpo ON cuerpo.id = p.cuerpoId
+JOIN cara cara ON cara.id = p.caraId;
+ ";
+                using (var command = new MySqlCommand(sql, conn))
+                {
+                    command.Parameters.AddWithValue("@id", id);
+                    command.CommandType = CommandType.Text;
+                    var reader = command.ExecuteReader();
+                    while (reader.Read())
+                    {
+                        Carta e = new Carta
+                        {
+                            Id = reader.GetInt32(0),
+                            PersonajeId = reader.GetInt32("personaje_id"),
+                            MazoId = reader.GetInt32("mazo_id"),
+                            Imagen = reader.GetString("imagen"),
+                            PersonajeNombre = reader.GetString("nombre"),
+                            PuntosHabilidad = reader.GetInt32(4),
+                            Vida = reader.GetInt32("vida"),
+                            Ataque = reader.GetInt32("ataque"),
+                            Tipo = reader.GetInt32("tipo")
+
+                        };
+
+                        res.Add(e);
+                    }
+                }
+            }
+            return res;
         }
 
         public IList<Carta> ObtenerPorIdUsuario(int id)
@@ -58,11 +155,14 @@ namespace juegoCartas_net.Models
             MySqlConnection conn = ObtenerConexion();
             {
                 string sql = @"
-					SELECT carta.id, `personaje_id`, `mazo_id`, carta.nivel, carta.puntos_habilidad,  p.imagen, p.nombre
+					SELECT carta.id, `personaje_id`, `mazo_id`, carta.nivel, p.puntos_habilidad,  p.imagen, p.nombre, cuerpo.vida, cara.tipo, cabeza.ataque
                     FROM `carta`
                     join mazo m on `mazo_id` = m.id
                     join usuario u on m.usuario_id = u.id
                     join personaje p on `personaje_id` = p.id
+                    Join Cabeza cabeza on cabeza.id = p.cabezaId 
+                    Join Cuerpo cuerpo on cuerpo.id = p.cuerpoId
+                    Join Cara cara on cara.id = p.caraId
                     WHERE u.id =@id";
                 using (var command = new MySqlCommand(sql, conn))
                 {
@@ -77,13 +177,19 @@ namespace juegoCartas_net.Models
                             PersonajeId = reader.GetInt32("personaje_id"),
                             MazoId = reader.GetInt32("mazo_id"),
                             Imagen = reader.GetString("imagen"),
-                            PersonajeNombre  = reader.GetString("nombre"),
-                             };
+                            PersonajeNombre = reader.GetString("nombre"),
+                            PuntosHabilidad = reader.GetInt32(4),
+                            Vida = reader.GetInt32("vida"),
+                            Ataque = reader.GetInt32("ataque"),
+                            Tipo = reader.GetInt32("tipo")
+
+                        };
+
                         res.Add(e);
                     }
                 }
             }
-             return res;
+            return res;
         }
 
         public IList<Carta> ObtenerTodos()

@@ -11,5 +11,6 @@ namespace juegoCartas_net.Models
     {
 
         public Usuario ObtenerPorEmail(string email);
+        public Usuario ObtenerRandom();
     }
 }

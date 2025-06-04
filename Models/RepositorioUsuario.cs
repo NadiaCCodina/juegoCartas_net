@@ -44,36 +44,61 @@ namespace juegoCartas_net.Models
             return res;
         }
 
-
-        public int Alta(Usuario e)
+   public Usuario ObtenerRandom()
         {
-            int res = -1;
-            MySqlConnection conn = ObtenerConexion();
-            {
-                string sql = @"INSERT INTO Usuario 
+			Usuario random = null;
+			    MySqlConnection conn = ObtenerConexion();
+			{
+				string sql = @" SELECT t.id FROM Usuario t JOIN 
+				(SELECT(FLOOR(max(id) * rand())) as maxid FROM Usuario)
+				 as tt on t.id >= tt.maxid LIMIT 1";
+				   using (var command = new MySqlCommand(sql, conn))
+				{
+			
+					command.CommandType = CommandType.Text;
+					var reader = command.ExecuteReader();
+					if (reader.Read())
+					{
+						random = new Usuario
+						{
+							Id = reader.GetInt32("Id"),
+							
+						};
+					}
+				}
+			}
+			return random;
+        }
+
+		public int Alta(Usuario e)
+		{
+			int res = -1;
+			MySqlConnection conn = ObtenerConexion();
+			{
+				string sql = @"INSERT INTO Usuario 
 					(Nombre,  Avatar, Email, Clave, Estado) 
 					VALUES (@nombre,  @avatar, @email, @clave,  1);
 					Select LAST_INSERT_ID();";//devuelve el id insertado (LAST_INSERT_ID para mysql)
-                using (var command = new MySqlCommand(sql, conn))
-                {
-                    command.CommandType = CommandType.Text;
-                    command.Parameters.AddWithValue("@nombre", e.Nombre);
-                
-                    if (String.IsNullOrEmpty(e.Avatar))
-                        command.Parameters.AddWithValue("@avatar", DBNull.Value);
-                    else
-                        command.Parameters.AddWithValue("@avatar", e.Avatar);
-                    command.Parameters.AddWithValue("@email", e.Email);
-                    command.Parameters.AddWithValue("@clave", e.Clave);
-                 
+				using (var command = new MySqlCommand(sql, conn))
+				{
+					command.CommandType = CommandType.Text;
+					command.Parameters.AddWithValue("@nombre", e.Nombre);
 
-                    res = Convert.ToInt32(command.ExecuteScalar());
-                    e.Id = res;
+					if (String.IsNullOrEmpty(e.Avatar))
+						command.Parameters.AddWithValue("@avatar", DBNull.Value);
+					else
+						command.Parameters.AddWithValue("@avatar", e.Avatar);
+					command.Parameters.AddWithValue("@email", e.Email);
+					command.Parameters.AddWithValue("@clave", e.Clave);
 
-                }
-            }
-            return res;
-        }
+
+					res = Convert.ToInt32(command.ExecuteScalar());
+					e.Id = res;
+
+				}
+			}
+			return res;
+		}
 
         public int Modificacion(Usuario e)
         {
@@ -184,6 +209,9 @@ namespace juegoCartas_net.Models
 			}
 			return e;
 		}
+
+        
+      
     }
 }
 

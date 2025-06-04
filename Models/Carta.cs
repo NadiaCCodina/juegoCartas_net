@@ -21,8 +21,13 @@ namespace juegoCartas_net.Models
         public string? PersonajeNombre { get; set; }
         public int? PuntosHabilidad { get; set; }
         public string? Imagen { get; set; }
-        public IFormFile? ImagenFile { get; set; }
-        
-      
+        public IFormFile? ImagenFile { get; set; }  
+        public int Vida { get; set; }
+        public int Ataque { get; set; }
+        public int Tipo { get; set; }
+
+
+
+
     }
 }
