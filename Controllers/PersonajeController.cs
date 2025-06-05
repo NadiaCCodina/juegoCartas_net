@@ -87,7 +87,7 @@ namespace juegoCartas_net.Controllers
             });
         }
 
-        public ActionResult CreatePersonaje()
+        public ActionResult CreateCartaPersonaje()
         {
             string email = User.Identity.Name;
             ViewBag.mazo = repoMazo.ObtenerPorEmailUsuario(email);
@@ -131,9 +131,9 @@ namespace juegoCartas_net.Controllers
 
             });
         }
-        // POST: Cabeza/Create
-        [HttpPost]
-        [ValidateAntiForgeryToken]
+        
+      
+     
         [Authorize(Policy = "Administrador")]
 
         public ActionResult CreateDiseño()
@@ -149,10 +149,10 @@ namespace juegoCartas_net.Controllers
         public ActionResult CreatePersonajeNuevo(Personaje c)
         {
             int puntoHabilidad = 0;
-            if (!ModelState.IsValid)
-            {
-                return View(c);
-            }
+            // if (!ModelState.IsValid)
+            // {
+            //     return View(c);
+            // }
 
             try
             {
@@ -185,12 +185,12 @@ namespace juegoCartas_net.Controllers
                 puntoHabilidad = ataque + vida + tipo;
                 c.PuntosHabilidad = puntoHabilidad;
                 repositorio.Alta(c);
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(Lista));
             }
             catch (Exception ex)
             {
                 ModelState.AddModelError("", "Error al crear el personaje: " + ex.Message);
-                return RedirectToAction(nameof(CreatePersonaje));
+                return RedirectToAction(nameof(CreateCartaPersonaje));
             }
         }
         [Authorize(Policy = "Administrador")]
@@ -237,7 +237,7 @@ namespace juegoCartas_net.Controllers
             {
 
                 ModelState.AddModelError("", "Error al editar: " + ex.Message);
-                return RedirectToAction(nameof(CreatePersonaje));
+                return RedirectToAction(nameof(CreateCartaPersonaje));
             }
         }
 
@@ -256,6 +256,33 @@ namespace juegoCartas_net.Controllers
 				return Json(new { Error = ex.Message });
 			}
 		}
-
+ public ActionResult Eliminar(int id)
+        {
+            try
+            {
+                var entidad = repositorio.ObtenerPorId(id);
+                return View(entidad);
+            }
+            catch (Exception ex)
+            {
+                  ModelState.AddModelError("", "Error " + ex.Message);
+                return RedirectToAction(nameof(Lista));
+            }
+        }
+        [HttpPost]
+        public ActionResult Eliminar(Cabeza entidad)
+        {
+            try
+            {
+                repositorio.Baja(entidad.Id);
+                TempData["Mensaje"] = "Eliminación realizada correctamente";
+                return RedirectToAction(nameof(Lista));
+            }
+            catch (Exception ex)
+            {
+                 ModelState.AddModelError("", "Error al Eliminar: " + ex.Message);
+                return RedirectToAction(nameof(Lista));
+            }
+        }
     }
 }

@@ -14,79 +14,134 @@
       <h1>@Model.Nombre</h1>
       <p class="title">Jugador</p>
       <p>Harvard University</p>
-      <input id="id" type= "hidden" value=@Model.Id />
-    
+      <input id="id" type="hidden" value=@Model.Id />
+
     </div>
   </div>
 </div>
+
+<h2 class="text-center text-light">Selecciona 3 cartas para jugar</h2>
 <form method="post" asp-action="Partida" asp-controller="Enfrentamiento">
+   <input type="hidden" name="retadorId" value="@Model?.Id" />
   <div class="container-cartas">
- @foreach (var car in listaCartas)
-{
-  <div class="wrapper">
-    <div class="card front-face" value="@car.Id" data-carta-id="@car.Id">
-      <img src="@car.Imagen" />
+    @foreach (var car in listaCartas)
+    {
+      <div class="wrapper">
+        <div class="card front-face" value="@car.Id" data-carta-id="@car.Id">
+          <img src="@car.Imagen" />
+          <div class="check-overlay" id="check-front-@car.Id">
+            ✔
+          </div>
+        </div>
 
-    </div>
 
-    <div class="card back-face" id="carta-@car.Id">
-      <img src="@Model.Avatar" />
-      <div class="info">
-        <h2>@car.PersonajeNombre</h2>
-        <label>
-          <input type="checkbox" class="carta-checkbox" name="cartasSeleccionadas" value="@car.Id" data-carta-id="@car.Id" />
-          Seleccionar
-        </label>
+        <div class="card back-face carta-seleccionable" id="carta-@car.Id" data-carta-id="@car.Id">
+
+          <img src="@Model.Avatar" />
+          <div class="info">
+            <h2>@car.PersonajeNombre</h2>
+            <label>
+              <input type="checkbox" class="carta-checkbox" name="cartasSeleccionadas" value="@car.Id"
+                data-carta-id="@car.Id" />
+              Seleccionar
+            </label>
+          </div>
+        </div>
       </div>
+    }
+    <div style="text-align: center; margin-top: 20px;">
+      <button type="submit" class="btn btn-dark btn-lg">Jugar</button>
     </div>
-  </div>
-}
-<div style="text-align: center; margin-top: 20px;">
-  <button type="submit" class="btn btn-primary">Jugar</button>
-</div>
 
 </form>
-@section Scripts {
 <script>
   const maxSeleccion = 3;
-  const checkboxes = document.querySelectorAll('.carta-checkbox');
 
-  checkboxes.forEach(cb => {
+  function actualizarCheckVisual(cartaId, seleccionado) {
+    const checkFront = document.getElementById(`check-front-${cartaId}`);
+    if (checkFront) {
+      checkFront.style.display = seleccionado ? 'block' : 'none';
+    }
+  }
+
+  document.querySelectorAll('.carta-seleccionable').forEach(carta => {
+    carta.addEventListener('click', function (e) {
+      if (e.target.tagName === 'INPUT') return;
+
+      const checkbox = this.querySelector('.carta-checkbox');
+      const cartaId = checkbox.dataset.cartaId;
+
+      if (checkbox.checked) {
+        checkbox.checked = false;
+        this.classList.remove('selected');
+        actualizarCheckVisual(cartaId, false);
+        return;
+      }
+
+      const seleccionadas = document.querySelectorAll('.carta-checkbox:checked');
+      if (seleccionadas.length >= maxSeleccion) {
+        alert("Solo puedes seleccionar hasta 3 cartas.");
+        return;
+      }
+
+      checkbox.checked = true;
+      this.classList.add('selected');
+      actualizarCheckVisual(cartaId, true);
+    });
+  });
+
+  document.querySelectorAll('.carta-checkbox').forEach(cb => {
     cb.addEventListener('change', () => {
       const seleccionadas = document.querySelectorAll('.carta-checkbox:checked');
 
-      // Limitar a 3 cartas seleccionadas
       if (seleccionadas.length > maxSeleccion) {
         cb.checked = false;
         alert("Solo puedes seleccionar hasta 3 cartas.");
         return;
       }
 
-      // Obtener la carta asociada al checkbox
-      const cartaId = cb.dataset.cartaId; // el atributo data-carta-id
+      const cartaId = cb.dataset.cartaId;
       const carta = document.getElementById(`carta-${cartaId}`);
 
-      // Agregar o quitar la clase visual
       if (cb.checked) {
-        carta.classList.add("selected");   // 👉 pinta el borde
+        carta.classList.add("selected");
       } else {
-        carta.classList.remove("selected");  // 👉 quita el borde
+        carta.classList.remove("selected");
       }
+
+      actualizarCheckVisual(cartaId, cb.checked);
     });
   });
 </script>
-}
+
+
+
 
 
 @section Styles {
   <link rel="stylesheet" href="~/css/style.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" />
   <style>
-  .card.selected {
-    border: 4px solid #1cc7d0;
-    box-shadow: 10px 10px 10px #ffffff;
-    transition: all 0.3s ease;
-  }
+    .selected {
+      border: 3px solid rgb(0, 0, 0);
+      box-shadow: 0 0 10px #ffffff;
+    }
+
+    .check-overlay {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      background-color: rgba(0, 0, 0, 0.85);
+      /* verde */
+      color: white;
+      font-size: 24px;
+      padding: 4px 8px;
+      border-radius: 50%;
+      display: none;
+      /* oculto por defecto */
+      z-index: 10;
+    }
+
 
     .container-cartas {
       display: flex;
@@ -205,53 +260,54 @@
 
     }
 
-   .card.usuario {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  max-width: 600px;
-  margin: 20px auto;
-  background: #fff;
-  padding: 20px;
-  border-radius: 10px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-}
+    .card.usuario {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      max-width: 600px;
+      margin: 20px auto;
+      background: #fff;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
 
-.usuario-img img {
-  width: 150px;
-  height: 150px;
-  border-radius: 50%;
-  object-fit: cover;
-  margin-right: 20px;
-}
+    .usuario-img img {
+      width: 150px;
+      height: 150px;
+      border-radius: 50%;
+      object-fit: cover;
+      margin-right: 20px;
+    }
 
-.usuario-info {
-  flex: 1;
-  text-align: left;
-}
+    .usuario-info {
+      flex: 1;
+      text-align: left;
+    }
 
-.usuario-info h1 {
-  font-size: 24px;
-  margin-bottom: 10px;
-}
+    .usuario-info h1 {
+      font-size: 24px;
+      margin-bottom: 10px;
+    }
 
-.usuario-info .title {
-  font-size: 18px;
-  color: grey;
-  margin-bottom: 5px;
-}
-.container {
-  display: block;
-  position: relative;
-  padding-left: 35px;
-  margin-bottom: 12px;
-  cursor: pointer;
-  font-size: 22px;
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
-}
+    .usuario-info .title {
+      font-size: 18px;
+      color: grey;
+      margin-bottom: 5px;
+    }
+
+    .container {
+      display: block;
+      position: relative;
+      padding-left: 35px;
+      margin-bottom: 12px;
+      cursor: pointer;
+      font-size: 22px;
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      user-select: none;
+    }
   </style>
 
 

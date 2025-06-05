@@ -1,13 +1,12 @@
 @model juegoCartas_net.Models.Enfrentamiento
 @{
-  ViewData["Title"] = "Partida";
-  Layout = "~/Views/Shared/_Layout.cshtml";
-  var cartasRetador = ViewBag.CartasRetador as List<juegoCartas_net.Models.Carta>;
-  var cartasContrincante = ViewBag.CartasContrincante as List<juegoCartas_net.Models.Carta>;
-  var usuarioRandom = ViewBag.UsuarioRandom;
-  var retador = ViewBag.Retador;
+    ViewData["Title"] = "Partida";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var cartasRetador = ViewBag.CartasRetador as List<juegoCartas_net.Models.Carta>;
+    var cartasContrincante = ViewBag.CartasContrincante as List<juegoCartas_net.Models.Carta>;
+    var usuarioRandom = ViewBag.UsuarioRandom;
 }
- <form method="post" asp-action="Create" asp-controller="Enfrentamiento">
+
 <div class="container mt-5">
     <h2 class="text-center  mb-4">¡Comienza la Partida!</h2>
     <div class="row justify-content-between">
@@ -17,7 +16,6 @@
             <div class="d-flex flex-wrap justify-content-center gap-3">
                 @foreach (var carta in cartasRetador)
                 {
-                    <input type="hidden" name="cartasRetadorIds" value="@carta.Id" />
                     <div class="card" style="width: 8rem;">
                         <img src="@carta.Imagen" class="card-img-top" alt="carta" />
                         <div class="card-body text-center p-2">
@@ -34,7 +32,6 @@
             <div class="d-flex flex-wrap justify-content-center gap-3">
                 @foreach (var carta in cartasContrincante)
                 {
-                   <input type="hidden" name="cartasContrincanteIds" value="@carta.Id" />
                     <div class="card" style="width: 8rem;">
                         <img src="@carta.Imagen" class="card-img-top" alt="carta" />
                         <div class="card-body text-center p-2">
@@ -48,8 +45,8 @@
 
     <!-- Botón Aceptar -->
     <div class="text-center mt-4">
-       
-            <input  name="retadorId" value="@retador.Id" />
+        <form method="post" asp-action="AceptarPartida" asp-controller="Enfrentamiento">
+            <input type="hidden" name="retadorId" value="@Model?.Id" />
             <input type="hidden" name="contrincanteId" value="@usuarioRandom.Id" />
             <button type="submit" class="btn btn-dark btn-lg">Aceptar Partida</button>
         </form>

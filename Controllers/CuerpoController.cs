@@ -82,6 +82,33 @@ namespace juegoCartas_net.Controllers
             }
         }
 
+        public ActionResult Eliminar(int id)
+        {
+            try
+            {
+                var entidad = repositorio.ObtenerPorId(id);
+                return View(entidad);
+            }
+            catch (Exception ex)
+            {//poner breakpoints para detectar errores
+                throw;
+            }
+        }
+        [HttpPost]
+        public ActionResult Eliminar(Cabeza entidad)
+        {
+            try
+            {
+                repositorio.Baja(entidad.Id);
+                TempData["Mensaje"] = "Eliminación realizada correctamente";
+                return RedirectToAction(nameof(Index));
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+
         public ActionResult Edit(int id)
         {
             try

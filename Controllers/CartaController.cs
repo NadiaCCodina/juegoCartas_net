@@ -71,12 +71,13 @@ namespace juegoCartas_net.Controllers
                     };
                     repoMazo.Modificacion(m);
                     repositorio.Alta(c);
-                    return RedirectToAction(nameof(Index), "Home");
+                    TempData["Mensaje"] = "Carta Creada!";
+                   return RedirectToAction("CreateCartaPersonaje", "Personaje");
                 }
                 else
                 {
-                      Console.WriteLine("no alcanzaron los puntos");
-                     return RedirectToAction(nameof(Index), "Home");
+                       TempData["Mensaje"] = "Las monedas no alcanzan!";
+                      return RedirectToAction("CreateCartaPersonaje", "Personaje");
                 }
             }
             catch (Exception ex)

@@ -1,13 +1,14 @@
-using juegoCartas_net.Models;
-using Microsoft.AspNetCore.Mvc;
-
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+
+using juegoCartas_net.Models;
+
 namespace juegoCartas_net.Controllers
 
 {
- [Authorize(Policy = "Administrador")]
+    [Authorize(Policy = "Administrador")]
     public class CabezaController : Controller
     {
         private readonly IConfiguration configuration;
@@ -29,6 +30,32 @@ namespace juegoCartas_net.Controllers
             return View(cuerpos);
         }
 
+        public ActionResult Eliminar(int id)
+        {
+            try
+            {
+                var entidad = repositorio.ObtenerPorId(id);
+                return View(entidad);
+            }
+            catch (Exception ex)
+            {//poner breakpoints para detectar errores
+                throw;
+            }
+        }
+        [HttpPost]
+        public ActionResult Eliminar(Cabeza entidad)
+        {
+            try
+            {
+                repositorio.Baja(entidad.Id);
+                TempData["Mensaje"] = "Eliminación realizada correctamente";
+                return RedirectToAction(nameof(Index));
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
 
         public ActionResult Create()
         {
@@ -38,9 +65,9 @@ namespace juegoCartas_net.Controllers
 
 
         // POST: Cabeza/Create
-         [HttpPost]
+        [HttpPost]
         [ValidateAntiForgeryToken]
-       
+
         [HttpPost]
         public ActionResult Create(Cabeza c)
         {
@@ -84,7 +111,7 @@ namespace juegoCartas_net.Controllers
                 return View(c);
             }
         }
- 
+
         public ActionResult Edit(int id)
         {
             try
@@ -94,35 +121,35 @@ namespace juegoCartas_net.Controllers
             }
             catch (Exception ex)
             {
-                 ModelState.AddModelError("", "Error al editar la Cabeza: " + ex.Message);
+                ModelState.AddModelError("", "Error al editar la Cabeza: " + ex.Message);
                 return View(id);
             }
         }
-        	[HttpPost]
-		[ValidateAntiForgeryToken]
-		
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+
         public ActionResult Edit(int id, Cabeza entidad)
-		{
-			
-			Cabeza c = null;
-			try
-			{
-				c = repositorio.ObtenerPorId(id);
-		
-				c.Nombre = entidad.Nombre;
-				c.Caracteristica = entidad.Caracteristica;
+        {
+
+            Cabeza c = null;
+            try
+            {
+                c = repositorio.ObtenerPorId(id);
+
+                c.Nombre = entidad.Nombre;
+                c.Caracteristica = entidad.Caracteristica;
                 c.Ataque = entidad.Ataque;
-				c.ImagenFile = entidad.ImagenFile;			
-				repositorio.Modificacion(c);
-				TempData["Mensaje"] = "Datos guardados correctamente";
-				return RedirectToAction(nameof(Index));
-			}
-			catch (Exception ex)
-			{
-				 ModelState.AddModelError("", "Error al crear la Cabeza: " + ex.Message);
+                c.ImagenFile = entidad.ImagenFile;
+                repositorio.Modificacion(c);
+                TempData["Mensaje"] = "Datos guardados correctamente";
+                return RedirectToAction(nameof(Index));
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("", "Error al crear la Cabeza: " + ex.Message);
                 return View(entidad);
-			}
-		}
+            }
+        }
 
     }
 }

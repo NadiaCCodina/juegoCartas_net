@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace juegoCartas_net.Controllers
 {
- [Authorize(Policy = "Administrador")]
+    [Authorize(Policy = "Administrador")]
     public class CaraController : Controller
     {
         private readonly IConfiguration configuration;
@@ -19,7 +19,7 @@ namespace juegoCartas_net.Controllers
 
         }
 
- public ActionResult Index()
+        public ActionResult Index()
         {
             var cuerpos = repositorio.ObtenerTodos();
             return View(cuerpos);
@@ -44,42 +44,67 @@ namespace juegoCartas_net.Controllers
                 return View(c);
             }
 
-            // try
-            // {
-            if (c.ImagenFile != null)
+            try
             {
-                string wwwPath = environment.WebRootPath;
-                string path = Path.Combine(wwwPath, "Uploads");
-                if (!Directory.Exists(path))
+                if (c.ImagenFile != null)
                 {
-                    Directory.CreateDirectory(path);
+                    string wwwPath = environment.WebRootPath;
+                    string path = Path.Combine(wwwPath, "Uploads");
+                    if (!Directory.Exists(path))
+                    {
+                        Directory.CreateDirectory(path);
+                    }
+
+                    string fileName = "cara_" + Guid.NewGuid().ToString() + Path.GetExtension(c.ImagenFile.FileName);
+                    string pathCompleto = Path.Combine(path, fileName);
+                    c.Imagen = Path.Combine("/Uploads", fileName);
+
+                    using (FileStream stream = new FileStream(pathCompleto, FileMode.Create))
+                    {
+                        c.ImagenFile.CopyTo(stream);
+                    }
+                }
+                else
+                {
+                    ModelState.AddModelError("ImagenFile", "Debe subir una imagen.");
+                    return View(c);
                 }
 
-                string fileName = "cara_" + Guid.NewGuid().ToString() + Path.GetExtension(c.ImagenFile.FileName);
-                string pathCompleto = Path.Combine(path, fileName);
-                c.Imagen = Path.Combine("/Uploads", fileName);
-
-                using (FileStream stream = new FileStream(pathCompleto, FileMode.Create))
-                {
-                    c.ImagenFile.CopyTo(stream);
-                }
+                repositorio.Alta(c);
+                return RedirectToAction(nameof(Index));
             }
-            else
+            catch (Exception ex)
             {
-                ModelState.AddModelError("ImagenFile", "Debe subir una imagen.");
+                ModelState.AddModelError("", "Error al crear la Cabeza: " + ex.Message);
                 return View(c);
             }
-
-            repositorio.Alta(c);
-            return RedirectToAction(nameof(Index));
-            // }
-            // catch (Exception ex)
-            // {
-            //     ModelState.AddModelError("", "Error al crear la Cabeza: " + ex.Message);
-            //     return View(c);
-            // }
         }
-
+        public ActionResult Eliminar(int id)
+        {
+            try
+            {
+                var entidad = repositorio.ObtenerPorId(id);
+                return View(entidad);
+            }
+            catch (Exception ex)
+            {//poner breakpoints para detectar errores
+                throw;
+            }
+        }
+        [HttpPost]
+        public ActionResult Eliminar(Cabeza entidad)
+        {
+            try
+            {
+                repositorio.Baja(entidad.Id);
+                TempData["Mensaje"] = "Eliminación realizada correctamente";
+                return RedirectToAction(nameof(Index));
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
 
         public ActionResult Edit(int id)
         {
@@ -93,31 +118,31 @@ namespace juegoCartas_net.Controllers
                 throw;
             }
         }
-        	[HttpPost]
-		[ValidateAntiForgeryToken]
-		
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+
         public ActionResult Edit(int id, Cara entidad)
-		{
-			
-			Cara c = null;
-			// try
-			// {
-				c = repositorio.ObtenerPorId(id);
-		
-				c.Nombre = entidad.Nombre;
-				c.Caracteristica = entidad.Caracteristica;
-                c.Ataque = entidad.Ataque;
-                c.Tipo = entidad.Tipo;
-				c.ImagenFile = entidad.ImagenFile;			
-				repositorio.Modificacion(c);
-				TempData["Mensaje"] = "Datos guardados correctamente";
-				return RedirectToAction(nameof(Index));
-			// }
-			// catch (Exception ex)
-			// {
-			// 	throw;
-			// }
-		}
+        {
+
+            Cara c = null;
+            // try
+            // {
+            c = repositorio.ObtenerPorId(id);
+
+            c.Nombre = entidad.Nombre;
+            c.Caracteristica = entidad.Caracteristica;
+            c.Ataque = entidad.Ataque;
+            c.Tipo = entidad.Tipo;
+            c.ImagenFile = entidad.ImagenFile;
+            repositorio.Modificacion(c);
+            TempData["Mensaje"] = "Datos guardados correctamente";
+            return RedirectToAction(nameof(Index));
+            // }
+            // catch (Exception ex)
+            // {
+            // 	throw;
+            // }
+        }
 
 
     }

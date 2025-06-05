@@ -35,11 +35,22 @@ namespace juegoCartas_net.Models
 			return res;
         }
 
-        public int Baja(int id)
-        {
-            throw new NotImplementedException();
+       public int Baja(int id)
+        {int res = -1;
+			  MySqlConnection conn = ObtenerConexion();
+			{
+				string sql = "DELETE FROM `cabeza` WHERE id = @id";
+				 using (var command = new MySqlCommand(sql, conn))
+				{
+					command.CommandType = CommandType.Text;
+					command.Parameters.AddWithValue("@id", id);
+					res = command.ExecuteNonQuery();
+				
+				}
+			}
+			return res;
+         
         }
-
         public int Modificacion(Cabeza entidad)
 		{
 			int res = -1;

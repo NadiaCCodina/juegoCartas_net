@@ -23,7 +23,7 @@ namespace juegoCartas_net.Models
 				{
 					command.CommandType = CommandType.Text;
 					command.Parameters.AddWithValue("@usuario_id", u.UsuarioId);
-					command.Parameters.AddWithValue("@puntos_habilidad", 20);
+					command.Parameters.AddWithValue("@puntos_habilidad", 21);
 					res = Convert.ToInt32(command.ExecuteScalar());
 					u.Id = res;
 				
@@ -32,10 +32,21 @@ namespace juegoCartas_net.Models
 			return res;
         }
 
-
-        public int Baja(int id)
-        {
-            throw new NotImplementedException();
+public int Baja(int id)
+        {int res = -1;
+			  MySqlConnection conn = ObtenerConexion();
+			{
+				string sql = "DELETE FROM `mazo` WHERE id = @id";
+				 using (var command = new MySqlCommand(sql, conn))
+				{
+					command.CommandType = CommandType.Text;
+					command.Parameters.AddWithValue("@id", id);
+					res = command.ExecuteNonQuery();
+				
+				}
+			}
+			return res;
+         
         }
 
         public int Modificacion(Carta p)

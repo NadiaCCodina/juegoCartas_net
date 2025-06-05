@@ -3,12 +3,13 @@
     ViewData["Title"] = "Create";
  var mazo = ViewBag.mazo;
 }
+
 <h1 class="text-white text-center">Monedas disponibles: @mazo.PuntosHabilidad</h1>
 <div class="container mt-4">
     <div class="row">
         <!-- caras  -->
         <div class="col-md-3">
-            <h5 class="text-white text-center">Caras</h5>
+            <h4 class="text-white text-center">Caras</h4>
             <div id="cardContainerCara" class="card-grid"></div>
         </div>
 
@@ -16,7 +17,7 @@
         <div class="col-md-6 d-flex flex-column align-items-center">
             <form asp-action="CrearCarta" asp-controller="Carta" enctype="multipart/form-data" method="post"
                 class="w-100">
-                <h5 class="text-center">Personaje Seleccionado</h5>
+                <h3 class="text-center text-light">Personaje Seleccionado</h3>
                 <div id="cardContainerPesonaje" class="personaje-vista mb-3"></div>
 
               
@@ -27,11 +28,16 @@
 
         <!-- cabezas -->
         <div class="col-md-3">
-            <h5 class="text-white text-center">Cabezas</h5>
+            <h4 class="text-white text-center">Cabezas</h4>
             <div id="cardContainerCabeza" class="card-grid"></div>
         </div>
     </div>
-
+@if (TempData["Mensaje"] != null)
+{
+    <div id="mensaje-alerta" class="alert alert-dismissible fade show bg-white text-dark border fs-3" role="alert">
+        @TempData["Mensaje"]
+    </div>
+}
     <!-- cuerpos-->
     <div class="row mt-4">
         <div class="col-12">
@@ -43,8 +49,15 @@
 
 
 @section Scripts {
-    <script>
 
+    
+  @* @if (TempData["Mensaje"] != null)
+    {
+        <script>
+            alert("@TempData["Mensaje"]");
+        </script>
+    } *@
+    <script>
         $(document).ready(function () {
             $.get("@Url.Action("ObtenerPersonaje", "Personaje")")
                 .done(function (res) {
@@ -74,6 +87,12 @@
                             if (i == 0) { clase = "caraIdSelect" } else {
 
                             };
+                              var tipo= null;
+            if(parte.tipo==0 ){
+                tipo= "Cuerpo a Cuerpo"
+            }else{
+                tipo="Distancia"
+            }
                             var card = $(`
                                                                                      <button onclick=cambioCara(${parte.id})>
                                                                                             <div class="card">
@@ -83,7 +102,7 @@
                                                                                                 <div class="card-body">
                                                                                                     <h2 class="card-title">${parte.nombre}</h2>
                                                                                                      <input id="caraId" type= "hidden" value=${parte.id} />
-                                                                                                    <p class="card-text"><strong>Característica:</strong> ${parte.caracteristica}</p>
+                                                                                                    <p class="card-text"><strong>Tipo:</strong> ${tipo}</p>
                                                                                                 </div>
                                                                                             </div>
                                                                                               </button>
@@ -110,7 +129,7 @@
                                                                                                 <div class="card-body">
                                                                                                     <h2 class="card-title">${parte.nombre}</h2>
                                                                                                    <input id="cabezaId" type= "hidden" value=${parte.id}  />
-                                                                                                    <p class="card-text"><strong>Característica:</strong> ${parte.caracteristica}</p>
+                                                                                                    <p class="card-text"><strong>Ataque:</strong> ${parte.ataque}</p>
                                                                                                 </div>
                                                                                             </div>
                                                                                               </button>
@@ -138,7 +157,7 @@
                                                                                                 <div class="card-body">
                                                                                                     <h2 class="card-title" >${parte.nombre}</h2>
                                                                                                    <input id= "cuerpoId"  type= "hidden" ${parte.id}/>
-                                                                                                    <p class="card-text"><strong>Característica:</strong> ${parte.caracteristica}</p>
+                                                                                                    <p class="card-text"><strong>Vida:</strong> ${parte.vida}</p>
                                                                                                 </div>
                                                                                             </div>
                                                                                               </button>
@@ -255,32 +274,41 @@
         function renderPersonaje(personaje) {
            var tipo= null;
             if(personaje.tipo==0 ){
-                tipo= "Mele"
+                tipo= "Cuerpo a Cuerpo"
             }else{
-                tipo="Rango"
+                tipo="Distancia"
             }
 
         
             return $(`
-                            <div class="text-center">
-                                <div class="mb-2">
-                                <img src="${personaje.imagen}" value="${personaje.imagen}" name ="imagen" class="img-fluid rounded shadow" alt="${personaje.nombre}" >
-                                </div>
-                                <h5 class="text-dark">${personaje.nombre}</h5>
-                                <h6 class="text-dark">Ataque: ${personaje.ataque}</h6>
-                                <h6 class="text-dark">Vida: ${personaje.vida}</h6>
-                                <h6 class="text-dark">Habilidad: ${tipo}</h6>
-                              
-                                <h5 class="text-dark">Valor: ${personaje.puntosHabilidad}</h5>
-                                <input id="idCaraPersonaje" type="hidden" value="${personaje.caraId}" />
-                                <input id="idCabezaPersonaje" type="hidden" value="${personaje.cabezaId}" />
-                                <input id="idCuerpoPersonaje" type="hidden" value="${personaje.cuerpoId}" />
-                                <input id="personajeId" name="personajeId" type="hidden" value="${personaje.id}" />
-                                <input id="imagen" name="imagen" type="hidden" value="${personaje.imagen}" />
-                            </div>
+                         <div class="d-flex align-items-center border rounded p-2 shadow-sm" style="background-color: white;">
+                         <div style="flex: 0 0 200px;"> 
+                        <img src="${personaje.imagen}" alt="${personaje.nombre}" class="img-fluid rounded" />
+                        </div>
+                        <div class="ml-3 flex-grow-1 text-left">
+                        <h5 class="text-dark mb-1">${personaje.nombre}</h5>
+                        <h6 class="text-dark mb-1">Ataque: ${personaje.ataque}</h6>
+                        <h6 class="text-dark mb-1">Vida: ${personaje.vida}</h6>
+                        <h6 class="text-dark mb-1">Tipo de ataque: </h6>
+                         <h6>${tipo}</h6>
+                        <h5 class="text-dark">Valor: ${personaje.puntosHabilidad}</h5>
+
+                        <input id="idCaraPersonaje" type="hidden" value="${personaje.caraId}" />
+                        <input id="idCabezaPersonaje" type="hidden" value="${personaje.cabezaId}" />
+                        <input id="idCuerpoPersonaje" type="hidden" value="${personaje.cuerpoId}" />
+                        <input id="personajeId" name="personajeId" type="hidden" value="${personaje.id}" />
+                        <input id="imagen" name="imagen" type="hidden" value="${personaje.imagen}" />
+                         </div>
+</div>
                         `);
         }
-
+            setTimeout(function () {
+            var alert = document.getElementById('mensaje-alerta');
+            if (alert) {
+                alert.classList.remove('show');
+                alert.classList.add('fade');
+            }
+        }, 3000); // Ocultar después de 3 segundos
     </script>
 
     <style>
@@ -316,7 +344,9 @@
             max-height: 300px;
             overflow-y: auto;
         }
-
+       .conteiner{
+          width: 80%;
+       }
         .card button,
         .card {
             all: unset;
@@ -363,11 +393,11 @@
 
             line-height: 1.2;
         }
- h4 {
+        @* h4 {
             font-size: 1.10rem;
 
             line-height: 1.2;
-        }
+        } *@
 
 
         .card-img {
@@ -388,7 +418,7 @@
             border: 2px dashed #ccc;
             border-radius: 12px;
             min-height: 200px;
-            /* Aumenta la altura mínima del contenedor */
+           
             background-color: #f8f9fa;
             display: flex;
             align-items: center;
@@ -398,7 +428,6 @@
         .personaje-vista img {
 
             max-height: 300px;
-            /* Aumenta esto si lo deseas aún más grande */
             max-width: 100%;
             object-fit: contain;
             border-radius: 10px;

@@ -37,8 +37,20 @@ namespace juegoCartas_net.Models
         }
 
         public int Baja(int id)
-        {
-            throw new NotImplementedException();
+        {int res = -1;
+			  MySqlConnection conn = ObtenerConexion();
+			{
+				string sql = "DELETE FROM `personaje` WHERE id = @id";
+				 using (var command = new MySqlCommand(sql, conn))
+				{
+					command.CommandType = CommandType.Text;
+					command.Parameters.AddWithValue("@id", id);
+					res = command.ExecuteNonQuery();
+				
+				}
+			}
+			return res;
+         
         }
 
         public int Modificacion(Personaje entidad)

@@ -17,13 +17,15 @@ namespace juegoCartas_net.Models
            	int res = -1;
 			MySqlConnection conn = ObtenerConexion();
 			{
-				string sql = @"INSERT INTO `enfrentamiento`( `retador_id`, `contrincante_id`, `fecha`) VALUES (@retador_id, @contrincante_id, NOW())
-					SELECT LAST_INSERT_ID();";
+				string sql = @"INSERT INTO `enfrentamiento`( `retador_id`, `contrincante_id`, `fecha`, resultado) 
+                VALUES (@retador_id, @contrincante_id, NOW(),  @resultado);
+				SELECT LAST_INSERT_ID();";
 				using (var command = new MySqlCommand(sql, conn))
 				{
 					command.CommandType = CommandType.Text;
 					command.Parameters.AddWithValue("@retador_id", e.RetadorId);
 					command.Parameters.AddWithValue("@contrincante_id", e.ContrincanteId);
+                    command.Parameters.AddWithValue("@resultado", e.Resultado);
 					
 					res = Convert.ToInt32(command.ExecuteScalar());
 					e.Id = res;
