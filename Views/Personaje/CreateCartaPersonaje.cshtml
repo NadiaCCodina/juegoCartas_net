@@ -94,18 +94,16 @@
                 tipo="Distancia"
             }
                             var card = $(`
-                                                                                     <button onclick=cambioCara(${parte.id})>
-                                                                                            <div class="card">
-                                   
-                                                                                                <img src="${parte.imagen}" class="card-img" alt="${parte.nombre}">
-                                        
-                                                                                                <div class="card-body">
-                                                                                                    <h2 class="card-title">${parte.nombre}</h2>
-                                                                                                     <input id="caraId" type= "hidden" value=${parte.id} />
-                                                                                                    <p class="card-text"><strong>Tipo:</strong> ${tipo}</p>
-                                                                                                </div>
-                                                                                            </div>
-                                                                                              </button>
+                                    <button onclick=cambioCara(${parte.id})>
+                                        <div class="card">
+                                            <img src="${parte.imagen}" class="card-img" alt="${parte.nombre}">
+                                        <div class="card-body">
+                                            <h2 class="card-title">${parte.nombre}</h2>
+                                            <input id="caraId" type= "hidden" value=${parte.id} />
+                                            <p class="card-text"><strong>Tipo:</strong> ${tipo}</p>
+                                        </div>
+                                        </div>
+                                    </button>
                                                                                         `);
                             $("#cardContainerCara").append(card);
                         };
@@ -123,16 +121,16 @@
                                 clase = "cabezaId"
                             };
                             var card = $(`
-                                                                     <button onclick=cambioCabeza(${parte.id})>
-                                                                                            <div class="card">
-                                                                                                <img src="${parte.imagen}" class="card-img" alt="${parte.nombre}">
-                                                                                                <div class="card-body">
-                                                                                                    <h2 class="card-title">${parte.nombre}</h2>
-                                                                                                   <input id="cabezaId" type= "hidden" value=${parte.id}  />
-                                                                                                    <p class="card-text"><strong>Ataque:</strong> ${parte.ataque}</p>
-                                                                                                </div>
-                                                                                            </div>
-                                                                                              </button>
+                                                            <button onclick=cambioCabeza(${parte.id})>
+                                                                <div class="card">
+                                                                    <img src="${parte.imagen}" class="card-img" alt="${parte.nombre}">
+                                                                <div class="card-body">
+                                                                    <h2 class="card-title">${parte.nombre}</h2>
+                                                                    <input id="cabezaId" type= "hidden" value=${parte.id}  />
+                                                                    <p class="card-text"><strong>Ataque:</strong> ${parte.ataque}</p>
+                                                                </div>
+                                                                </div>
+                                                            </button>
                                                                                         `);
                             $("#cardContainerCabeza").append(card);
                         };
@@ -151,16 +149,16 @@
                                 clase = "cuerpoId"
                             };
                             var card = $(`
-                                                                     <button onclick=cambioCuerpo(${parte.id})>
-                                                                                            <div class="card">
-                                                                                                <img src="${parte.imagen}" class="card-img" alt="${parte.nombre}">
-                                                                                                <div class="card-body">
-                                                                                                    <h2 class="card-title" >${parte.nombre}</h2>
-                                                                                                   <input id= "cuerpoId"  type= "hidden" ${parte.id}/>
-                                                                                                    <p class="card-text"><strong>Vida:</strong> ${parte.vida}</p>
-                                                                                                </div>
-                                                                                            </div>
-                                                                                              </button>
+                                                    <button onclick=cambioCuerpo(${parte.id})>
+                                                        <div class="card">
+                                                            <img src="${parte.imagen}" class="card-img" alt="${parte.nombre}">
+                                                            <div class="card-body">
+                                                            <h2 class="card-title" >${parte.nombre}</h2>
+                                                            <input id= "cuerpoId"  type= "hidden" ${parte.id}/>
+                                                            <p class="card-text"><strong>Vida:</strong> ${parte.vida}</p>
+                                                        </div>
+                                                        </div>
+                                                    </button>
                                                                                         `);
                             $("#cardContainer").append(card);
                         };
@@ -283,21 +281,21 @@
             return $(`
                          <div class="d-flex align-items-center border rounded p-2 shadow-sm" style="background-color: white;">
                          <div style="flex: 0 0 200px;"> 
-                        <img src="${personaje.imagen}" alt="${personaje.nombre}" class="img-fluid rounded" />
+                                <img src="${personaje.imagen}" alt="${personaje.nombre}" class="img-fluid rounded" />
                         </div>
                         <div class="ml-3 flex-grow-1 text-left">
-                        <h5 class="text-dark mb-1">${personaje.nombre}</h5>
-                        <h6 class="text-dark mb-1">Ataque: ${personaje.ataque}</h6>
-                        <h6 class="text-dark mb-1">Vida: ${personaje.vida}</h6>
-                        <h6 class="text-dark mb-1">Tipo de ataque: </h6>
-                         <h6>${tipo}</h6>
-                        <h5 class="text-dark">Valor: ${personaje.puntosHabilidad}</h5>
+                                    <h5 class="text-dark mb-1">${personaje.nombre}</h5>
+                                    <h6 class="text-dark mb-1">Ataque: ${personaje.ataque}</h6>
+                                    <h6 class="text-dark mb-1">Vida: ${personaje.vida}</h6>
+                                    <h6 class="text-dark mb-1">Tipo de ataque: </h6>
+                                    <h6>${tipo}</h6>
+                                    <h5 class="text-dark">Valor: ${personaje.puntosHabilidad}</h5>
 
-                        <input id="idCaraPersonaje" type="hidden" value="${personaje.caraId}" />
-                        <input id="idCabezaPersonaje" type="hidden" value="${personaje.cabezaId}" />
-                        <input id="idCuerpoPersonaje" type="hidden" value="${personaje.cuerpoId}" />
-                        <input id="personajeId" name="personajeId" type="hidden" value="${personaje.id}" />
-                        <input id="imagen" name="imagen" type="hidden" value="${personaje.imagen}" />
+                                    <input id="idCaraPersonaje" type="hidden" value="${personaje.caraId}" />
+                                    <input id="idCabezaPersonaje" type="hidden" value="${personaje.cabezaId}" />
+                                    <input id="idCuerpoPersonaje" type="hidden" value="${personaje.cuerpoId}" />
+                                    <input id="personajeId" name="personajeId" type="hidden" value="${personaje.id}" />
+                                    <input id="imagen" name="imagen" type="hidden" value="${personaje.imagen}" />
                          </div>
 </div>
                         `);

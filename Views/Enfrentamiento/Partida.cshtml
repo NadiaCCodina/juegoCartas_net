@@ -7,51 +7,93 @@
   var usuarioRandom = ViewBag.UsuarioRandom;
   var retador = ViewBag.Retador;
 }
- <form method="post" asp-action="Create" asp-controller="Enfrentamiento">
+
 <div class="container mt-5">
-    <h2 class="text-center  mb-4">¡Comienza la Partida!</h2>
-    <div class="row justify-content-between">
-        <!-- Retador -->
-        <div class="col-md-5 bg-dark p-3 rounded ">
-            <h4 class="text-center text-light mb-3">Tus Cartas</h4>
-            <div class="d-flex flex-wrap justify-content-center gap-3">
-                @foreach (var carta in cartasRetador)
-                {
-                    <input type="hidden" name="cartasRetadorIds" value="@carta.Id" />
-                    <div class="card" style="width: 8rem;">
-                        <img src="@carta.Imagen" class="card-img-top" alt="carta" />
-                        <div class="card-body text-center p-2">
-                            <p class="card-text">@carta.PersonajeNombre</p>
-                        </div>
-                    </div>
-                }
-            </div>
-        </div>
+  <h2 class="text-center mb-4">¡Comienza la Partida!</h2>
+  <div class="row justify-content-between">
 
-        <!-- Contrincante -->
-        <div class="col-md-5 bg-secondary p-3 rounded">
-            <h4 class="text-center mb-3">Cartas del Contrincante: @usuarioRandom.Nombre</h4>
-            <div class="d-flex flex-wrap justify-content-center gap-3">
-                @foreach (var carta in cartasContrincante)
-                {
-                   <input type="hidden" name="cartasContrincanteIds" value="@carta.Id" />
-                    <div class="card" style="width: 8rem;">
-                        <img src="@carta.Imagen" class="card-img-top" alt="carta" />
-                        <div class="card-body text-center p-2">
-                            <p class="card-text">@carta.PersonajeNombre</p>
-                        </div>
-                    </div>
-                }
+    <!-- Retador -->
+    <div class="col-md-5 bg-dark p-3 rounded">
+      <h4 class="text-center text-light mb-3">Tus Cartas</h4>
+      <h4 class="text-center text-light mb-3" id="retadorGana"></h4>
+      <div class="d-flex flex-wrap justify-content-center gap-3">
+        @foreach (var carta in cartasRetador)
+        {
+          <input type="hidden" class="cartas-retador-id" value="@carta.Id" />
+          <div class="card" style="width: 8rem;">
+            <img src="@carta.Imagen" class="card-img-top" alt="carta" />
+            <div class="card-body text-center p-2">
+              <p class="card-text">@carta.PersonajeNombre</p>
             </div>
-        </div>
+          </div>
+        }
+      </div>
     </div>
 
-    <!-- Botón Aceptar -->
-    <div class="text-center mt-4">
-       
-            <input  name="retadorId" value="@retador.Id" />
-            <input type="hidden" name="contrincanteId" value="@usuarioRandom.Id" />
-            <button type="submit" class="btn btn-dark btn-lg">Aceptar Partida</button>
-        </form>
+    <!-- Contrincante -->
+    <div class="col-md-5 bg-secondary p-3 rounded">
+      <h4 class="text-center mb-3">Cartas del Contrincante: @usuarioRandom.Nombre</h4>
+      <h4 class="text-center text-light mb-3" id="contrincanteGana"></h4>
+      <div class="d-flex flex-wrap justify-content-center gap-3">
+        @foreach (var carta in cartasContrincante)
+        {
+          <input type="hidden" class="cartas-contrincante-id" value="@carta.Id" />
+          <div class="card" style="width: 8rem;">
+            <img src="@carta.Imagen" class="card-img-top" alt="carta" />
+            <div class="card-body text-center p-2">
+              <p class="card-text">@carta.PersonajeNombre</p>
+            </div>
+          </div>
+        }
+      </div>
     </div>
+  </div>
+
+  <!-- Botón para Jugar -->
+  <div class="text-center mt-4">
+    <input type="hidden" id="retadorId" value="@retador.Id" />
+    <input type="hidden" id="contrincanteId" value="@usuarioRandom.Id" />
+    <button type="button" class="btn btn-dark btn-lg" onclick="Jugar()">Aceptar Partida</button>
+  </div>
 </div>
+
+<script>
+  function Jugar() {
+    var contrincanteId = document.getElementById('contrincanteId').value;
+    var retadorId = document.getElementById('retadorId').value;
+
+    var cartasRetadorIds = $(".cartas-retador-id").map(function () {
+      return $(this).val();
+    }).get();
+
+    var cartasContrincanteIds = $(".cartas-contrincante-id").map(function () {
+      return $(this).val();
+    }).get();
+
+    $.ajax({
+      url: '/Enfrentamiento/Create',
+      type: 'POST',
+      data: {
+        contrincanteId: contrincanteId,
+        retadorId: retadorId,
+        cartasRetadorIds: cartasRetadorIds,
+        cartasContrincanteIds: cartasContrincanteIds
+      },
+      traditional: true,
+      success: function (res) {
+        if (res && res.ganadorId) {
+          if (res.ganadorId == retadorId) {
+            document.getElementById("retadorGana").textContent = "¡Ganaste!";
+          } else if (res.ganadorId == contrincanteId) {
+            document.getElementById("contrincanteGana").textContent = "Ganador";
+          }
+        } else {
+          alert("Empate");
+        }
+      },
+      error: function () {
+        alert("Error al realizar la petición.");
+      }
+    });
+  }
+</script>

@@ -76,33 +76,54 @@ namespace juegoCartas_net.Controllers
                     Console.WriteLine("Vida Retador desp" + vidaRetador1);
                     Console.WriteLine("Vida Contrincantedesp" + vidaContrincante1);
                 int resultado = 0;
+            int ganadorId;
                 Usuario ganador = null;
-                if (vidaContrincante1 < vidaRetador1)
-                {
-                    resultado = 1;
-                    ganador = repoUsuario.ObtenerPorId(retadorId);
-                }
-                else if (vidaContrincante1 == vidaRetador1)
-                {
-                    resultado = 2;
-                }
-                else
-                {
-                    resultado = 3;
-                     ganador = repoUsuario.ObtenerPorId(contrincanteId);
-                }
-  Console.WriteLine("Retadorid" +  retadorId);
+                 List<Carta> CartasGanador = new List<Carta>();
+            if (vidaContrincante1 < vidaRetador1)
+            {
+                resultado = 1;
+                ganador = repoUsuario.ObtenerPorId(retadorId);
+                CartasGanador = cartasRetador;
+                ganadorId = ganador.Id;
+            }
+            else if (vidaContrincante1 == vidaRetador1)
+            {
+                resultado = 2;
+                ganadorId = 0;
+            }
+            else
+            {
+                resultado = 3;
+                ganador = repoUsuario.ObtenerPorId(contrincanteId);
+                CartasGanador = cartasContrincante;
+                 ganadorId= ganador.Id;
+            }
+                    Console.WriteLine("Retadorid" +  retadorId);
                     Enfrentamiento enf = new Enfrentamiento
                     {
                         RetadorId = retadorId,
                         ContrincanteId = contrincanteId,
                         Resultado = resultado,
-
                     };
-
+ 
                 repositorio.Alta(enf);
+Console.WriteLine("CARTAS RETADOR:");
+foreach (var carta in cartasRetador)
+{
+    Console.WriteLine($"ID: {carta.Id}, Nombre: {carta.PersonajeNombre}");
+}
+Console.WriteLine("Total cartas: " + cartasRetador.Count);
+
+            ViewBag.CartasRetador = cartasRetador;
+            ViewBag.CartasContrincante = cartasContrincante;
+             ViewBag.CartasRetador = cartasRetador;
+            ViewBag.RetadorId = retadorId;
+               ViewBag.ContrincanteId = contrincanteId;
+            ViewBag.Ganador = ganador;
+           
+              ViewBag.CartasGanador = CartasGanador;
                 ViewBag.Ganador = ganador;
-                 return View("Resultado");
+                  return Json(new { ganadorId });
             // }
             // catch (Exception ex)
             // {

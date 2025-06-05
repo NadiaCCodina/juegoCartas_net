@@ -8,117 +8,118 @@
 }
 
 <h1>Personajes</h1>
-	<form class="form-row justify-content-start">
-<label class="control-label">Personaje</label>
-<div class="custom-select">
+<form class="form-row justify-content-start">
+	<label class="control-label">Personaje</label>
+	<div class="custom-select">
 
-			<select class="custom-select" id="Personaje" name="PersonajeId" required>
-				<option></option>
-			</select>
-		</div>
+		<select class="custom-select" id="Personaje" name="PersonajeId" required>
+			<option></option>
+		</select>
+	</div>
 	<div class="form-group col-md-12 mt-2">
-					<button type="button" class="btn btn-outline-light w-100" onclick="buscarPorNombre()">Buscar</button>
-				</div>
-			</form>
-		<div>
-<p>
-    <a asp-action="CreateDiseño" class="btn btn-success">Crear nuevo</a>
-</p>
-		</div>
+		<button type="button" class="btn btn-outline-light w-100" onclick="buscarPorNombre()">Buscar</button>
+	</div>
+</form>
+<div>
+	<p>
+		<a asp-action="CreateDiseño" class="btn btn-success">Crear nuevo</a>
+	</p>
+</div>
 
-  <table class="table table-bordered table-hover table-striped align-middle">
-        <thead class="thead-dark">
-    
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Id)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Nombre)
-            </th>
-         
-            <th>
-                @Html.DisplayNameFor(model => model.CaraId)
-            </th>
- 			<th>
-                @Html.DisplayNameFor(model => model.CabezaId)
-            </th>
+<table class="table table-bordered table-hover table-striped align-middle">
+	<thead class="thead-dark">
 
-			<th>
-                @Html.DisplayNameFor(model => model.CuerpoId)
-            </th>
-			<th>
-                @Html.DisplayNameFor(model => model.Vida)
-            </th>
-			<th>
-                @Html.DisplayNameFor(model => model.Ataque)
-            </th>
-           
-			<th>
-                @Html.DisplayNameFor(model => model.Tipo)
-            </th>
-			<th>
-                @Html.DisplayNameFor(model => model.PuntosHabilidad)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Imagen)
-            </th>
-          
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
 		<tr>
-			<td>
-				@Html.DisplayFor(modelItem => item.Id)
-			</td>
-			<td>
-				@Html.DisplayFor(modelItem => item.Nombre)
-			</td>
-			<td>
-				@Html.DisplayFor(modelItem => item.CaraId)
-			</td>
-
-			<td>
-				@Html.DisplayFor(modelItem => item.CabezaId)
-			</td>
-
-			<td>
-				@Html.DisplayFor(modelItem => item.CuerpoId)
-			</td>
-			<td>
-				@Html.DisplayFor(modelItem => item.Vida)
-			</td>
-			<td>
-				@Html.DisplayFor(modelItem => item.Ataque)
-			</td>
 			<th>
-                @Html.DisplayFor(model => item.Tipo)
-            </th>
+				@Html.DisplayNameFor(model => model.Id)
+			</th>
 			<th>
-                @Html.DisplayFor(model => item.PuntosHabilidad)
-            </th>
-			<td>
-				@if(!String.IsNullOrEmpty(item.Imagen)) 
-				{
-					var x = item.Imagen + "?" + rnd.Next();
-					<img width="64" src="@x" />
-				}
-				else 
-				{
-					<span>Sin foto</span>
-				}
+				@Html.DisplayNameFor(model => model.Nombre)
+			</th>
 
-			</td>
-			
-			<td>
-				<a asp-action="Edit" asp-route-id="@item.Id" title="Editar">Editar</a>&nbsp;
-				<a asp-action="Eliminar" asp-route-id="@item.Id" title="Eliminar">Eliminar</a>
-			</td>
+			<th>
+				@Html.DisplayNameFor(model => model.CaraId)
+			</th>
+			<th>
+				@Html.DisplayNameFor(model => model.CabezaId)
+			</th>
+
+			<th>
+				@Html.DisplayNameFor(model => model.CuerpoId)
+			</th>
+			<th>
+				@Html.DisplayNameFor(model => model.Vida)
+			</th>
+			<th>
+				@Html.DisplayNameFor(model => model.Ataque)
+			</th>
+
+			<th>
+				@Html.DisplayNameFor(model => model.Tipo)
+			</th>
+			<th>
+				@Html.DisplayNameFor(model => model.PuntosHabilidad)
+			</th>
+			<th>
+				@Html.DisplayNameFor(model => model.Imagen)
+			</th>
+
+			<th></th>
 		</tr>
-}
-    </tbody>
+	</thead>
+	<tbody>
+		@foreach (var item in Model)
+		{
+			<tr>
+				<td>
+					@Html.DisplayFor(modelItem => item.Id)
+				</td>
+				<td>
+					@Html.DisplayFor(modelItem => item.Nombre)
+				</td>
+				<td>
+					@Html.DisplayFor(modelItem => item.CaraId)
+				</td>
+
+				<td>
+					@Html.DisplayFor(modelItem => item.CabezaId)
+				</td>
+
+				<td>
+					@Html.DisplayFor(modelItem => item.CuerpoId)
+				</td>
+				<td>
+					@Html.DisplayFor(modelItem => item.Vida)
+				</td>
+				<td>
+					@Html.DisplayFor(modelItem => item.Ataque)
+				</td>
+				<th>
+					@Html.DisplayFor(model => item.Tipo)
+				</th>
+				<th>
+					@Html.DisplayFor(model => item.PuntosHabilidad)
+				</th>
+				<td>
+					@if (!String.IsNullOrEmpty(item.Imagen))
+					{
+						var x = item.Imagen + "?" + rnd.Next();
+						<img width="64" src="@x" />
+					}
+					else
+					{
+						<span>Sin foto</span>
+					}
+
+				</td>
+
+				<td>
+					<a asp-action="Edit" asp-route-id="@item.Id" title="Editar">Editar</a>&nbsp;
+					<a asp-action="Eliminar" asp-route-id="@item.Id" title="Eliminar">Eliminar</a>
+				</td>
+			</tr>
+		}
+	</tbody>
 </table>
 <!-- Paginación -->
 <nav aria-label="Page navigation">
@@ -172,42 +173,30 @@
 
 			$('#Personaje').select2({
 				language: "es",
-				theme: 'bootstrap4',  // Aplica el tema de Bootstrap
-									 @* width: '100%'  *@
+				theme: 'bootstrap4',
+
 				placeholder: "Buscar Personaje...",
 
-				minimumInputLength: 3,// Realiza la búsqueda después de 3 caracteres
-				maximumInputLength: 10,// Limita la entrada a 10 caracteres
+				minimumInputLength: 3,
+				maximumInputLength: 10,
 				ajax: {
-				delay: 250,
-				dataType: "json",
-				cache: true,// Habilita el cache para evitar peticiones repetidas
-				//url: '/Propietarios/Buscar',
-				url: function (params) {
-					let q = params.term ? encodeURIComponent(params.term) : "";
-					return `/Personaje/Buscarjson/${q}`;
-				},/*
-															data: function (params) {
-																var query = {
-																	q: params.term,
-																}
-																return query;
-															},*/
-				processResults: function (res) {
-					return {
-						results: res.datos.map(i => ({ id: i.id, text: `${i.nombre} ${i.apellido}` }))
-					};
-				}
-			}
-								});
-		@* var idOriginal = +"@Model?.PersonajeId";
+					delay: 250,
+					dataType: "json",
+					cache: true,
 
-			var textoOriginal = "@Model?.Inqui?.Nombre" + ' ' + "@Model?.Inqui?.Apellido";
-			if (idOriginal && textoOriginal) {
-				var option = new Option(textoOriginal, idOriginal, true, true);
-				$(".Personaje").append(option).trigger('change');
-			} *@
-											});
+					url: function (params) {
+						let q = params.term ? encodeURIComponent(params.term) : "";
+						return `/Personaje/Buscarjson/${q}`;
+					},
+					processResults: function (res) {
+						return {
+							results: res.datos.map(i => ({ id: i.id, text: `${i.nombre} ${i.apellido}` }))
+						};
+					}
+				}
+			});
+
+		});
 	</script>
 	<style>
 		.select2-search__field {
@@ -217,4 +206,4 @@
 
 		}
 	</style>
-	}
+}

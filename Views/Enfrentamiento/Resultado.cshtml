@@ -5,6 +5,10 @@
     var cartasRetador = ViewBag.CartasRetador as List<juegoCartas_net.Models.Carta>;
     var cartasContrincante = ViewBag.CartasContrincante as List<juegoCartas_net.Models.Carta>;
     var usuarioRandom = ViewBag.UsuarioRandom;
+    var retadorId =  ViewBag.RetadorId;
+    var contrincanteId = ViewBag.ContrincanteId;
+    
+    var ganador = ViewBag.Ganador;
 }
 
 <div class="container mt-5">
@@ -14,6 +18,9 @@
         <div class="col-md-5 bg-dark p-3 rounded ">
             <h4 class="text-center text-light mb-3">Tus Cartas</h4>
             <div class="d-flex flex-wrap justify-content-center gap-3">
+                @if(retadorId==ganador.Id){
+                    <h1>Ganaste</h1>
+                }
                 @foreach (var carta in cartasRetador)
                 {
                     <div class="card" style="width: 8rem;">
@@ -30,6 +37,9 @@
         <div class="col-md-5 bg-secondary p-3 rounded">
             <h4 class="text-center mb-3">Cartas del Contrincante: @usuarioRandom.Nombre</h4>
             <div class="d-flex flex-wrap justify-content-center gap-3">
+                 @if(contrincanteId==ganador.Id){
+                    <h1>Ganador</h1>
+                }
                 @foreach (var carta in cartasContrincante)
                 {
                     <div class="card" style="width: 8rem;">
@@ -46,7 +56,7 @@
     <!-- Botón Aceptar -->
     <div class="text-center mt-4">
         <form method="post" asp-action="AceptarPartida" asp-controller="Enfrentamiento">
-            <input type="hidden" name="retadorId" value="@Model?.Id" />
+            <input type="hidden" name="retadorId" value="@Model.Id" />
             <input type="hidden" name="contrincanteId" value="@usuarioRandom.Id" />
             <button type="submit" class="btn btn-dark btn-lg">Aceptar Partida</button>
         </form>
