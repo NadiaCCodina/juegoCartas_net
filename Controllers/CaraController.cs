@@ -32,12 +32,12 @@ namespace juegoCartas_net.Controllers
             return View();
         }
 
-[HttpGet]
-public IActionResult ObtenerTodas()
-{
-    var caras = repositorio.ObtenerTodos();
-    return Json(caras);
-}
+        [HttpGet]
+        public IActionResult ObtenerTodas()
+        {
+            var caras = repositorio.ObtenerTodos();
+            return Json(caras);
+        }
 
         // POST: Cabeza/Create
         [HttpPost]
@@ -95,8 +95,8 @@ public IActionResult ObtenerTodas()
             }
             catch (Exception ex)
             {
-                  ModelState.AddModelError("", "Error al cargar la vista " + ex.Message);
-                 return RedirectToAction(nameof(Index));
+                ModelState.AddModelError("", "Error al cargar la vista " + ex.Message);
+                return RedirectToAction(nameof(Index));
             }
         }
         [HttpPost]
@@ -110,8 +110,8 @@ public IActionResult ObtenerTodas()
             }
             catch (Exception ex)
             {
-                 ModelState.AddModelError("", "Error al eliminar la Cara: " + ex.Message);
-                 return RedirectToAction(nameof(Index));
+                ModelState.AddModelError("", "Error al eliminar la Cara: " + ex.Message);
+                return RedirectToAction(nameof(Index));
             }
         }
 
@@ -124,8 +124,8 @@ public IActionResult ObtenerTodas()
             }
             catch (Exception ex)
             {
-                  ModelState.AddModelError("", "Error al cargar la vista " + ex.Message);
-                 return RedirectToAction(nameof(Index));
+                ModelState.AddModelError("", "Error al cargar la vista " + ex.Message);
+                return RedirectToAction(nameof(Index));
             }
         }
         [HttpPost]
@@ -137,40 +137,40 @@ public IActionResult ObtenerTodas()
             Cara c = null;
             try
             {
-            c = repositorio.ObtenerPorId(id);
+                c = repositorio.ObtenerPorId(id);
 
-            c.Nombre = entidad.Nombre;
-            c.Caracteristica = entidad.Caracteristica;
-            c.Ataque = entidad.Ataque;
-            c.Tipo = entidad.Tipo;
-           if (entidad.ImagenFile != null && entidad.ImagenFile.Length > 0)
-        {
-            string wwwPath = environment.WebRootPath;
-            string path = Path.Combine(wwwPath, "imagenes");
+                c.Nombre = entidad.Nombre;
+                c.Caracteristica = entidad.Caracteristica;
+                c.Ataque = entidad.Ataque;
+                c.Tipo = entidad.Tipo;
+                if (entidad.ImagenFile != null && entidad.ImagenFile.Length > 0)
+                {
+                    string wwwPath = environment.WebRootPath;
+                    string path = Path.Combine(wwwPath, "imagenes");
 
-            if (!Directory.Exists(path))
-            {
-                Directory.CreateDirectory(path);
-            }
+                    if (!Directory.Exists(path))
+                    {
+                        Directory.CreateDirectory(path);
+                    }
 
-            string fileName = "cara_" + id + Path.GetExtension(entidad.ImagenFile.FileName);
-            string pathCompleto = Path.Combine(path, fileName);
+                    string fileName = "cara_" + id + Path.GetExtension(entidad.ImagenFile.FileName);
+                    string pathCompleto = Path.Combine(path, fileName);
 
-            c.Imagen = Path.Combine("/imagenes", fileName);
+                    c.Imagen = Path.Combine("/imagenes", fileName);
 
-            using (FileStream stream = new FileStream(pathCompleto, FileMode.Create))
-            {
-                entidad.ImagenFile.CopyTo(stream);
-            }
-        }
-            repositorio.Modificacion(c);
-            TempData["Mensaje"] = "Datos guardados correctamente";
-            return RedirectToAction(nameof(Index));
+                    using (FileStream stream = new FileStream(pathCompleto, FileMode.Create))
+                    {
+                        entidad.ImagenFile.CopyTo(stream);
+                    }
+                }
+                repositorio.Modificacion(c);
+                TempData["Mensaje"] = "Datos guardados correctamente";
+                return RedirectToAction(nameof(Index));
             }
             catch (Exception ex)
             {
-            	  ModelState.AddModelError("", "Error al editar la Cara: " + ex.Message);
-                 return RedirectToAction(nameof(Index));
+                ModelState.AddModelError("", "Error al editar la Cara: " + ex.Message);
+                return RedirectToAction(nameof(Index));
             }
         }
 

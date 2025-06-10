@@ -14,13 +14,13 @@
 </div>
 
 <div class="main-layout">
-    <!-- Caras -->
+    <!-- caras -->
     <div class="column">
         <h4>Caras</h4>
         <div id="cardContainerCara" class="card-grid-vertical"></div>
     </div>
 
-    <!-- Personaje central -->
+    <!-- personaje -->
     <div class="column-center">
         <h4>Personaje Seleccionado</h4>
         <form asp-action="CrearCarta" asp-controller="Carta" enctype="multipart/form-data" method="post">
@@ -29,14 +29,14 @@
         </form>
     </div>
 
-    <!-- Cabezas -->
+    <!-- cabezas -->
     <div class="column">
         <h4>Cabezas</h4>
         <div id="cardContainerCabeza" class="card-grid-vertical"></div>
     </div>
 </div>
 
-<!-- Cuerpos -->
+<!-- cuerpos -->
 <div class="text-white text-center mt-3">
     <h4>Cuerpos</h4>
 </div>
@@ -414,6 +414,15 @@ h1, h4 {
 
 .btn-dark:hover {
     background-color: #555;
+}
+button {
+    background: transparent;
+    border: none;
+    padding: 0;
+    margin: 0;
+    cursor: pointer;
+    font: inherit;
+    color: inherit;
 }
 
     </style>

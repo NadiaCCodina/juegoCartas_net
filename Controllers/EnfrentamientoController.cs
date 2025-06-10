@@ -38,7 +38,7 @@ namespace juegoCartas_net.Controllers
         {
             int usuarioActualId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
             ViewBag.Cartas = repoCarta.ObtenerPorIdUsuario(usuarioActualId);
-            
+
             var usuario = repoUsuario.ObtenerPorId(usuarioActualId);
             return View(usuario);
         }
@@ -49,96 +49,92 @@ namespace juegoCartas_net.Controllers
 
             try
             {
-            List<Carta> cartasRetador = new List<Carta>();
-            foreach (int id in cartasRetadorIds)
-            {
-                var carta = repoCarta.ObtenerPorId(id);
-                if (carta != null)
+                List<Carta> cartasRetador = new List<Carta>();
+                foreach (int id in cartasRetadorIds)
                 {
-                    cartasRetador.Add(carta);
+                    var carta = repoCarta.ObtenerPorId(id);
+                    if (carta != null)
+                    {
+                        cartasRetador.Add(carta);
+                    }
                 }
-            }
-            List<Carta> cartasContrincante = new List<Carta>();
-            foreach (int id in cartasContrincanteIds)
-            {
-                var carta = repoCarta.ObtenerPorId(id);
-                if (carta != null)
+                List<Carta> cartasContrincante = new List<Carta>();
+                foreach (int id in cartasContrincanteIds)
                 {
-                    cartasContrincante.Add(carta);
+                    var carta = repoCarta.ObtenerPorId(id);
+                    if (carta != null)
+                    {
+                        cartasContrincante.Add(carta);
+                    }
                 }
-            }
 
-            var primerCartaRetador = cartasRetador.First();
-            var primerCartaContrincante = cartasContrincante.First();
-            var vidaContrincante1 = primerCartaContrincante.Vida - primerCartaRetador.Ataque;
-            var vidaRetador1 = primerCartaRetador.Vida - primerCartaContrincante.Ataque;
-            Console.WriteLine("Retadorid" + retadorId);
-            Console.WriteLine("Vida Retador" + primerCartaRetador.Vida);
-            Console.WriteLine("Vida Contrincante" + primerCartaContrincante.Vida);
-
-            var segundaCartaRetador = cartasRetador[1];
-            var segundaCartaContrincante = cartasContrincante[1];
-            var vidaContrincante2 = segundaCartaContrincante.Vida - segundaCartaRetador.Ataque;
-            var vidaRetador2 = segundaCartaRetador.Vida - segundaCartaContrincante.Ataque;
-            var tercerCartaRetador = cartasRetador[2];
-            var tercerCartaContrincante = cartasContrincante[2];
-            var vidaContrincante3 = tercerCartaContrincante.Vida - tercerCartaRetador.Ataque;
-            var vidaRetador3 = tercerCartaRetador.Vida - tercerCartaContrincante.Ataque;
-            var totalRetador = vidaRetador1 + vidaRetador2 + vidaRetador3;
-            var totalContrincante = vidaContrincante1 + vidaContrincante2 + vidaContrincante3;
-            int resultado = 0;
-            int ganadorId = 0;
-            Console.WriteLine("Vida Retador desp" + totalRetador);
-            Console.WriteLine("Vida Contrincantedesp" + totalContrincante);
-            Usuario ganador = null;
-            List<Carta> CartasGanador = new List<Carta>();
-            if (totalContrincante < totalRetador)
-            {
-                resultado = 1;
-                ganador = repoUsuario.ObtenerPorId(retadorId);
-                CartasGanador = cartasRetador;
-                ganadorId = ganador.Id;
-            }
-            else if (totalContrincante == totalRetador)
-            {
-                resultado = 2;
-            }
-            else
-            {
-                resultado = 3;
-                ganador = repoUsuario.ObtenerPorId(contrincanteId);
-                CartasGanador = cartasContrincante;
-                ganadorId = ganador.Id;
-            }
-            Console.WriteLine("Retadorid" + retadorId);
-            Enfrentamiento enf = new Enfrentamiento
-            {
-                RetadorId = retadorId,
-                ContrincanteId = contrincanteId,
-                Resultado = resultado,
-            };
-
-            if (ganadorId > 0 && ganadorId == retadorId)
-            {
-                var mazo = repoMazo.ObtenerPorId(ganadorId);
-                var puntos = mazo.PuntosHabilidad + 1;
-
-                Mazo m = new Mazo
+                var primerCartaRetador = cartasRetador.First();
+                var primerCartaContrincante = cartasContrincante.First();
+                var vidaContrincante1 = primerCartaContrincante.Vida - primerCartaRetador.Ataque;
+                var vidaRetador1 = primerCartaRetador.Vida - primerCartaContrincante.Ataque;
+                var segundaCartaRetador = cartasRetador[1];
+                var segundaCartaContrincante = cartasContrincante[1];
+                var vidaContrincante2 = segundaCartaContrincante.Vida - segundaCartaRetador.Ataque;
+                var vidaRetador2 = segundaCartaRetador.Vida - segundaCartaContrincante.Ataque;
+                var tercerCartaRetador = cartasRetador[2];
+                var tercerCartaContrincante = cartasContrincante[2];
+                var vidaContrincante3 = tercerCartaContrincante.Vida - tercerCartaRetador.Ataque;
+                var vidaRetador3 = tercerCartaRetador.Vida - tercerCartaContrincante.Ataque;
+                var totalRetador = vidaRetador1 + vidaRetador2 + vidaRetador3;
+                var totalContrincante = vidaContrincante1 + vidaContrincante2 + vidaContrincante3;
+                int resultado = 0;
+                int ganadorId = 0;
+                Console.WriteLine("Vida Retador desp" + totalRetador);
+                Console.WriteLine("Vida Contrincantedesp" + totalContrincante);
+                Usuario ganador = null;
+                List<Carta> CartasGanador = new List<Carta>();
+                if (totalContrincante < totalRetador)
                 {
-                    Id = mazo.Id,
-                    UsuarioId = ganadorId,
-                    PuntosHabilidad = puntos,
-
+                    resultado = 1;
+                    ganador = repoUsuario.ObtenerPorId(retadorId);
+                    CartasGanador = cartasRetador;
+                    ganadorId = ganador.Id;
+                }
+                else if (totalContrincante == totalRetador)
+                {
+                    resultado = 2;
+                }
+                else
+                {
+                    resultado = 3;
+                    ganador = repoUsuario.ObtenerPorId(contrincanteId);
+                    CartasGanador = cartasContrincante;
+                    ganadorId = ganador.Id;
+                }
+                Console.WriteLine("Retadorid" + retadorId);
+                Enfrentamiento enf = new Enfrentamiento
+                {
+                    RetadorId = retadorId,
+                    ContrincanteId = contrincanteId,
+                    Resultado = resultado,
                 };
-                Console.WriteLine("Puntos Retador:" + puntos);
-                repoMazo.Modificacion(m);
-            }
+
+                if (ganadorId > 0 && ganadorId == retadorId)
+                {
+                    var mazo = repoMazo.ObtenerPorId(ganadorId);
+                    var puntos = mazo.PuntosHabilidad + 1;
+
+                    Mazo m = new Mazo
+                    {
+                        Id = mazo.Id,
+                        UsuarioId = ganadorId,
+                        PuntosHabilidad = puntos,
+
+                    };
+                    Console.WriteLine("Puntos Retador:" + puntos);
+                    repoMazo.Modificacion(m);
+                }
 
 
-            repositorio.Alta(enf);
+                repositorio.Alta(enf);
 
 
-            return Json(new { ganadorId });
+                return Json(new { ganadorId });
             }
             catch (Exception ex)
             {
