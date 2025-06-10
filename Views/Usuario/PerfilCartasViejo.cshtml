@@ -1,0 +1,244 @@
+@model juegoCartas_net.Models.Usuario
+@{
+  ViewData["Title"] = "3D Flip Card";
+  Layout = "~/Views/Shared/_Layout.cshtml";
+  var listaCartas = ViewBag.Cartas;
+  string tipo= null;
+}
+ 
+<div class="conteiner-usuario">
+  <div class="card usuario">
+    <div class="usuario-img">
+      <img src="@Model.Avatar" alt="avatar" />
+    </div>
+    <div class="usuario-info">
+      <h1>@Model.Nombre</h1>
+      <p class="title">Jugador</p>
+      <p> @Model.Email</p>
+      <input id="id" type= "hidden" value=@Model.Id />
+      <a class="btn btn-dark" asp-action="Edit" asp-route-id="@Model.Id" title="Editar"> Modificar Perfil</a>&nbsp;
+    
+    </div>
+  </div>
+</div>
+
+<div class="botones-usuario">
+    <a class="btn btn-dark" asp-controller="Personaje" asp-action="CreateCartaPersonaje">
+        Crear Personaje
+    </a>
+    <a class="btn btn-dark" asp-controller="Enfrentamiento" asp-action="Cartas" asp-route-id="@Model.Id">
+        Jugar
+    </a>
+</div>
+
+@* <div><a asp-controller="Enfrentamiento" class="btn btn-dark" asp-action="Cartas" asp-route-id="@Model.Id" title="Cartas"> Jugar</a>&nbsp;</div>  *@
+<div class="container-cartas">
+  @foreach (var car in listaCartas)
+  {
+    <div class="wrapper">
+      <div class="card front-face">
+        <img src="@car.Imagen" />
+      </div>
+      <div class="card back-face">
+        <img src="@Model.Avatar" />
+
+        <div class="info">
+
+        </div>
+         
+        @if (@car.Tipo == 1) {
+          tipo = "Mele";
+        }else{
+          tipo = "Rango";
+        }
+        <h2>@car.PuntosHabilidad</h2>
+        <h6>Vida @car.Vida</h6>
+        <h6>Ataque @car.Ataque</h6>
+        <h6>Tipo @tipo</h6>
+        <h6>@car.PersonajeNombre</h6>
+
+
+      </div>
+    </div>
+  }
+
+
+</div>
+
+@section Styles {
+  <link rel="stylesheet" href="~/css/style.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" />
+  <style>
+    .container-cartas {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      justify-content: center;
+      align-items: center;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    html,
+    body {
+      display: grid;
+      height: 100%;
+      width: 100%;
+      place-items: center;
+      background: linear-gradient(375deg, #797979, #000000);
+    }
+
+    ::selection {
+      color: #fff;
+      background: #1cc7d0;
+    }
+
+    .wrapper {
+      height: 300px;
+      width: 280px;
+      position: relative;
+      transform-style: preserve-3d;
+      perspective: 1000px;
+    }
+
+    .wrapper .card {
+      position: absolute;
+      height: 100%;
+      width: 100%;
+      padding: 5px;
+      background: #fff;
+      border-radius: 10px;
+      transform: translateY(0deg);
+      transform-style: preserve-3d;
+      backface-visibility: hidden;
+      box-shadow: 0px 10px 15px rgba(0, 0, 0, 0.1);
+      transition: transform 0.7s cubic-bezier(0.4, 0.2, 0.2, 1);
+    }
+
+    .wrapper:hover>.front-face {
+      transform: rotateY(-180deg);
+    }
+
+    .wrapper .card img {
+      height: 100%;
+      width: 100%;
+      object-fit: cover;
+      border-radius: 10px;
+    }
+
+    .wrapper .back-face {
+      display: flex;
+      align-items: center;
+      justify-content: space-evenly;
+      flex-direction: column;
+      transform: rotateY(180deg);
+      text-align: center;
+    }
+
+    .wrapper:hover>.back-face {
+      transform: rotateY(0deg);
+    }
+
+    .wrapper .back-face img {
+      height: 100px;
+      width: 100px;
+      padding: 5px;
+      border-radius: 50%;
+      background: linear-gradient(375deg, #797979, #000000);
+    }
+
+    .wrapper .back-face .info {
+      text-align: center;
+    }
+
+    .back-face .info .title {
+      font-size: 30px;
+      font-weight: 500;
+    }
+
+    .back-face ul {
+      display: flex;
+    }
+
+    .back-face ul a {
+      display: block;
+      height: 40px;
+      width: 40px;
+      color: #fff;
+      text-align: center;
+      margin: 0 5px;
+      line-height: 38px;
+      border: 2px solid transparent;
+      border-radius: 50%;
+      background: linear-gradient(375deg, #797979, #000000);
+      transition: all 0.5s ease;
+    }
+
+    .back-face ul a:hover {
+      color: #1cc7d0;
+      border-color: #1cc7d0;
+      background: linear-gradient(375deg, transparent, transparent);
+
+    }
+
+   .card.usuario {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  max-width: 600px;
+  margin: 20px auto;
+  background: #fff;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.usuario-img img {
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-right: 20px;
+}
+
+.usuario-info {
+  flex: 1;
+  text-align: left;
+}
+
+.usuario-info h1 {
+  font-size: 24px;
+  margin-bottom: 10px;
+}
+
+.usuario-info .title {
+  font-size: 18px;
+  color: grey;
+  margin-bottom: 5px;
+}
+.botones-usuario {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  margin: 20px auto;
+}
+
+.botones-usuario .btn {
+  min-width: 150px;
+  font-weight: bold;
+  transition: background 0.3s ease;
+}
+
+.botones-usuario .btn:hover {
+  background-color: #343a40;
+  color: #1cc7d0;
+}
+
+  </style>
+
+}

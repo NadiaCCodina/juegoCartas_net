@@ -1,6 +1,6 @@
 
 using System.Data;
-
+using System.Text.Json;
 using MySql.Data.MySqlClient;
 
 namespace juegoCartas_net.Models
@@ -14,28 +14,29 @@ namespace juegoCartas_net.Models
 
         public int Alta(Enfrentamiento e)
         {
-           	int res = -1;
-			MySqlConnection conn = ObtenerConexion();
-			{
-				string sql = @"INSERT INTO `enfrentamiento`( `retador_id`, `contrincante_id`, `fecha`, resultado) 
+            int res = -1;
+            MySqlConnection conn = ObtenerConexion();
+            {
+                string sql = @"INSERT INTO `enfrentamiento`( `retador_id`, `contrincante_id`, `fecha`, resultado) 
                 VALUES (@retador_id, @contrincante_id, NOW(),  @resultado);
 				SELECT LAST_INSERT_ID();";
-				using (var command = new MySqlCommand(sql, conn))
-				{
-					command.CommandType = CommandType.Text;
-					command.Parameters.AddWithValue("@retador_id", e.RetadorId);
-					command.Parameters.AddWithValue("@contrincante_id", e.ContrincanteId);
+                using (var command = new MySqlCommand(sql, conn))
+                {
+                    command.CommandType = CommandType.Text;
+                    command.Parameters.AddWithValue("@retador_id", e.RetadorId);
+                    command.Parameters.AddWithValue("@contrincante_id", e.ContrincanteId);
                     command.Parameters.AddWithValue("@resultado", e.Resultado);
-					
-					res = Convert.ToInt32(command.ExecuteScalar());
-					e.Id = res;
-				
-				}
-			}
-			return res;
+
+                    res = Convert.ToInt32(command.ExecuteScalar());
+                    e.Id = res;
+
+                }
+            }
+            conn.Close();
+            return res;
         }
 
-      
+
 
         public int Baja(int id)
         {
@@ -56,40 +57,45 @@ namespace juegoCartas_net.Models
         {
             throw new NotImplementedException();
         }
-          
-        public IList<Carta> ObtenerPorIdUsuario(int id)
+        public string ObtenerResultadosJson(int retadorId)
         {
-            IList<Carta> res = new List<Carta>();
+            var resultados = new List<Dictionary<string, object>>();
             MySqlConnection conn = ObtenerConexion();
             {
-                string sql = @"
-					SELECT carta.id, `personaje_id`, `mazo_id`, carta.nivel, carta.puntos_habilidad,  p.imagen, p.nombre
-                    FROM `carta`
-                    join mazo m on `mazo_id` = m.id
-                    join usuario u on m.usuario_id = u.id
-                    join personaje p on `personaje_id` = p.id
-                    WHERE u.id =@id";
-                using (var command = new MySqlCommand(sql, conn))
+
+                string query = @"
+                SELECT `retador_id`, u.nombre, resultado, COUNT(resultado) AS total
+                FROM `enfrentamiento` 
+                JOIN usuario u ON u.id = retador_id
+                WHERE retador_id = @retadorId
+                GROUP BY resultado 
+                ORDER BY total DESC";
+
+                using (var command = new MySqlCommand(query, conn))
                 {
-                    command.Parameters.AddWithValue("@id", id);
-                    command.CommandType = CommandType.Text;
-                    var reader = command.ExecuteReader();
-                    while (reader.Read())
+                    command.Parameters.AddWithValue("@retadorId", retadorId);
+
+                    using (var reader = command.ExecuteReader())
                     {
-                        Carta e = new Carta
+                        while (reader.Read())
                         {
-                            Id = reader.GetInt32(0),
-                            PersonajeId = reader.GetInt32("personaje_id"),
-                            MazoId = reader.GetInt32("mazo_id"),
-                            Imagen = reader.GetString("imagen"),
-                            PersonajeNombre = reader.GetString("nombre"),
-                        };
-                        res.Add(e);
+                            var fila = new Dictionary<string, object>();
+
+                            for (int i = 0; i < reader.FieldCount; i++)
+                            {
+                                fila[reader.GetName(i)] = reader.GetValue(i);
+                            }
+
+                            resultados.Add(fila);
+                        }
                     }
                 }
             }
-            return res;
+
+            // Serializar a JSON
+            return JsonSerializer.Serialize(resultados, new JsonSerializerOptions { WriteIndented = true });
         }
+
 
         public IList<Carta> ObtenerTodos()
         {

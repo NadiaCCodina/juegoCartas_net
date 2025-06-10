@@ -55,9 +55,6 @@ namespace juegoCartas_net.Controllers
                 ViewBag.Pagina = pagina;
                 var total = repositorio.ObtenerCantidad();
                 ViewBag.TotalPaginas = total % tamaño == 0 ? total / tamaño : total / tamaño + 1;
-                // TempData es para pasar datos entre acciones
-                // ViewBag/Data es para pasar datos del controlador a la vista
-                // Si viene alguno valor por el tempdata, lo paso al viewdata/viewbag
                 ViewBag.Id = TempData["Id"];
                 if (TempData.ContainsKey("Mensaje"))
                     ViewBag.Mensaje = TempData["Mensaje"];
@@ -69,7 +66,25 @@ namespace juegoCartas_net.Controllers
                 throw;
             }
         }
+  [Authorize(Policy = "Administrador")]
+        [Route("[controller]/buscarporpersonaje")]
+        public ActionResult BuscarPorPersonaje(int id )
+        {
+            try
+            {
+               
+                var personaje = repositorio.ObtenerPorId(id);
+               
+               
+              
+                return View("Edit", personaje);
 
+            }
+            catch (Exception ex)
+            {// Poner breakpoints para detectar errores
+                throw;
+            }
+        }
         [Authorize(Policy = "Administrador")]
         public ActionResult Create()
         {
@@ -95,6 +110,7 @@ namespace juegoCartas_net.Controllers
         }
 
         [HttpGet]
+        //Obtengo las partes de los personajes
         public IActionResult ObtenerPartes()
         {
             var personaje = repositorio.ObtenerTodos();
@@ -110,6 +126,7 @@ namespace juegoCartas_net.Controllers
 
             });
         }
+        //Cambio el personaje segun la parte Elegida
         public IActionResult cambio(int cara, int cabeza, int cuerpo)
         {
             var personaje = repositorio.ObtenerPorParte(cara, cabeza, cuerpo);
@@ -122,6 +139,7 @@ namespace juegoCartas_net.Controllers
             });
         }
         [HttpGet]
+        //Obtengo el personaje por defecto cuando cargo la pagina
         public IActionResult ObtenerPersonaje()
         {
             var personaje = repositorio.ObtenerPorParte(1, 1, 1);
@@ -131,11 +149,11 @@ namespace juegoCartas_net.Controllers
 
             });
         }
-        
-      
-     
-        [Authorize(Policy = "Administrador")]
 
+
+
+        [Authorize(Policy = "Administrador")]
+        //Carga la pagina de crear diseño de personaje
         public ActionResult CreateDiseño()
         {
             ViewBag.Caras = repoCara.ObtenerTodos();
@@ -146,6 +164,7 @@ namespace juegoCartas_net.Controllers
 
         [HttpPost]
         [Authorize(Policy = "Administrador")]
+        //crea el diseño de personaje
         public ActionResult CreatePersonajeNuevo(Personaje c)
         {
             int puntoHabilidad = 0;
@@ -193,6 +212,8 @@ namespace juegoCartas_net.Controllers
                 return RedirectToAction(nameof(CreateCartaPersonaje));
             }
         }
+
+
         [Authorize(Policy = "Administrador")]
         public ActionResult Edit(int id)
         {
@@ -200,7 +221,7 @@ namespace juegoCartas_net.Controllers
             try
             {
                 var entidad = repositorio.ObtenerPorId(id);
-                return View(entidad);//pasa el modelo a la vista
+                return View(entidad);
             }
             catch (Exception ex)
             {
@@ -240,23 +261,23 @@ namespace juegoCartas_net.Controllers
                 return RedirectToAction(nameof(CreateCartaPersonaje));
             }
         }
+        //Para el select2 de index
+        [Route("[controller]/Buscarjson/{q}", Name = "BuscarPersonajeJson")]
+        public ActionResult Buscarjson(string q)
+        {
+            try
+            {
+                var res = repositorio.BuscarPorNombre(q);
 
-  [Route("[controller]/Buscarjson/{q}", Name = "BuscarPersonajeJson")]
-		public ActionResult Buscarjson(string q)
-		{
-			try
-			{
-				var res = repositorio.BuscarPorNombre(q);
 
-				
-				 return Json(new { Datos = res });
-			}
-			catch (Exception ex)
-			{
-				return Json(new { Error = ex.Message });
-			}
-		}
- public ActionResult Eliminar(int id)
+                return Json(new { Datos = res });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { Error = ex.Message });
+            }
+        }
+        public ActionResult Eliminar(int id)
         {
             try
             {
@@ -265,7 +286,7 @@ namespace juegoCartas_net.Controllers
             }
             catch (Exception ex)
             {
-                  ModelState.AddModelError("", "Error " + ex.Message);
+                ModelState.AddModelError("", "Error " + ex.Message);
                 return RedirectToAction(nameof(Lista));
             }
         }
@@ -280,7 +301,7 @@ namespace juegoCartas_net.Controllers
             }
             catch (Exception ex)
             {
-                 ModelState.AddModelError("", "Error al Eliminar: " + ex.Message);
+                ModelState.AddModelError("", "Error al Eliminar: " + ex.Message);
                 return RedirectToAction(nameof(Lista));
             }
         }

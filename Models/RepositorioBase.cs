@@ -24,8 +24,7 @@ namespace juegoCartas_net.Models
             }
             catch (MySqlException ex)
             {
-                
-
+               
                 return null; 
             }
         }

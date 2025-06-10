@@ -26,7 +26,8 @@ namespace juegoCartas_net.Models
 		public string? Avatar { get; set; } = "";
 		[NotMapped]
 		public IFormFile? AvatarFile { get; set; }
-	
+	   	public int PuntosHabilidad { get; set; }
+
 		public int Rol { get; set; }
 
 		public int Estado { get; set; }

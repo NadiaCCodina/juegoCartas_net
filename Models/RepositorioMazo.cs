@@ -29,6 +29,7 @@ namespace juegoCartas_net.Models
 				
 				}
 			}
+            conn.Close();
 			return res;
         }
 
@@ -45,6 +46,7 @@ public int Baja(int id)
 				
 				}
 			}
+            conn.Close();
 			return res;
          
         }
@@ -71,6 +73,7 @@ public int Baja(int id)
 
 				}
 			}
+            conn.Close();
 			return res;
         }
 
@@ -105,6 +108,7 @@ public int Baja(int id)
                     }
                 }
             }
+            conn.Close();
              return m;
         }
 
@@ -115,7 +119,32 @@ public int Baja(int id)
 
         Mazo IRepositorio<Mazo>.ObtenerPorId(int id)
         {
-            throw new NotImplementedException();
+            Mazo? m = null;
+            MySqlConnection conn = ObtenerConexion();
+            {
+                string sql = @"
+					SELECT mazo.id, `usuario_id`, `puntos_habilidad` FROM `mazo`
+                    JOIN usuario u ON u.id =`usuario_id`
+                    WHERE u.id = @id";
+                using (var command = new MySqlCommand(sql, conn))
+                {
+                    command.Parameters.AddWithValue("@id", id);
+                    command.CommandType = CommandType.Text;
+                    var reader = command.ExecuteReader();
+                    if (reader.Read())
+                    {
+                      m = new Mazo
+                      {
+                          Id = reader.GetInt32(0),
+                          UsuarioId = reader.GetInt32("usuario_id"),
+                            PuntosHabilidad = reader.GetInt32("puntos_habilidad"),
+                             };
+                    
+                    }
+                }
+            }
+            conn.Close();
+             return m;
         }
 
         IList<Mazo> IRepositorio<Mazo>.ObtenerTodos()

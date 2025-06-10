@@ -36,6 +36,7 @@ namespace juegoCartas_net.Models
 				
 				}
 			}
+				conn.Close();
 			return res;
         }
 
@@ -44,14 +45,16 @@ namespace juegoCartas_net.Models
 			  MySqlConnection conn = ObtenerConexion();
 			{
 				string sql = "DELETE FROM `cara` WHERE id = @id";
-				 using (var command = new MySqlCommand(sql, conn))
+				using (var command = new MySqlCommand(sql, conn))
 				{
 					command.CommandType = CommandType.Text;
 					command.Parameters.AddWithValue("@id", id);
 					res = command.ExecuteNonQuery();
-				
+
 				}
+				
 			}
+			conn.Close();
 			return res;
          
         }
@@ -76,6 +79,7 @@ namespace juegoCartas_net.Models
 
 				}
 			}
+			conn.Close();
 			return res;
         }
 
@@ -140,6 +144,7 @@ namespace juegoCartas_net.Models
 
                 }
             }
+				conn.Close();
             return res;
         }
     }

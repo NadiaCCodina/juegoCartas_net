@@ -51,12 +51,7 @@
 @section Scripts {
 
     
-  @* @if (TempData["Mensaje"] != null)
-    {
-        <script>
-            alert("@TempData["Mensaje"]");
-        </script>
-    } *@
+
     <script>
         $(document).ready(function () {
             $.get("@Url.Action("ObtenerPersonaje", "Personaje")")

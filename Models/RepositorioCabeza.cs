@@ -32,6 +32,7 @@ namespace juegoCartas_net.Models
 				
 				}
 			}
+			conn.Close();
 			return res;
         }
 
@@ -47,9 +48,11 @@ namespace juegoCartas_net.Models
 					res = command.ExecuteNonQuery();
 				
 				}
+				
 			}
+			conn.Close();
 			return res;
-         
+          
         }
         public int Modificacion(Cabeza entidad)
 		{
@@ -70,6 +73,7 @@ namespace juegoCartas_net.Models
 
 				}
 			}
+			conn.Close();
 			return res;
         }
 
@@ -100,6 +104,7 @@ namespace juegoCartas_net.Models
 				
 				}
 			}
+			conn.Close();
 			return e;
 
            
@@ -133,6 +138,7 @@ namespace juegoCartas_net.Models
 
                 }
             }
+			conn.Close();
             return res;
         }
     }

@@ -17,7 +17,7 @@
 		</select>
 	</div>
 	<div class="form-group col-md-12 mt-2">
-		<button type="button" class="btn btn-outline-light w-100" onclick="buscarPorNombre()">Buscar</button>
+		<button type="button" class="btn btn-info" onclick="buscarPorNombre()">Buscar</button>
 	</div>
 </form>
 <div>
@@ -164,40 +164,40 @@
 		}
 	</ul>
 </nav>
+<script>
 
+		function buscarPorNombre() {
+			var personajeId = document.getElementById('Personaje').value;
+			
+
+
+			window.location.href = '/Personaje/buscarporpersonaje?id=' + personajeId;
+		}
+	</script>
 
 @section Scripts {
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
-	<script type="text/javascript">
-		$(document).ready(function () {
+<script src="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/js/tom-select.complete.min.js"></script>
 
-			$('#Personaje').select2({
-				language: "es",
-				theme: 'bootstrap4',
+<script>
+	document.addEventListener('DOMContentLoaded', function () {
+		new TomSelect("#Personaje", {
+			placeholder: "Buscar Personaje...",
+			load: function (query, callback) {
+				if (!query.length) return callback();
 
-				placeholder: "Buscar Personaje...",
-
-				minimumInputLength: 3,
-				maximumInputLength: 10,
-				ajax: {
-					delay: 250,
-					dataType: "json",
-					cache: true,
-
-					url: function (params) {
-						let q = params.term ? encodeURIComponent(params.term) : "";
-						return `/Personaje/Buscarjson/${q}`;
-					},
-					processResults: function (res) {
-						return {
-							results: res.datos.map(i => ({ id: i.id, text: `${i.nombre} ${i.apellido}` }))
-						};
-					}
-				}
-			});
-
+				fetch(`/Personaje/Buscarjson/${encodeURIComponent(query)}`)
+					.then(response => response.json())
+					.then(json => {
+						callback(json.datos.map(i => ({ value: i.id, text: `${i.nombre} ${i.apellido}` })));
+					})
+					.catch(() => callback());
+			}
 		});
-	</script>
+	});
+</script>
+
 	<style>
 		.select2-search__field {
 			width: 100% !important;

@@ -114,6 +114,7 @@ namespace juegoCartas_net.Models
 
                 }
             }
+            	conn.Close();
             return p;
 
 
@@ -157,6 +158,7 @@ namespace juegoCartas_net.Models
 
                 }
             }
+            	conn.Close();
             return res;
         }
 
@@ -180,6 +182,7 @@ namespace juegoCartas_net.Models
 
                 }
             }
+            	conn.Close();
             return res;
         }
 
@@ -221,6 +224,7 @@ namespace juegoCartas_net.Models
 
                 }
             }
+            	conn.Close();
             return res;
         }
         public Personaje ObtenerPorParte(int caraId, int cabezaId, int cuerpoId)
@@ -265,6 +269,7 @@ namespace juegoCartas_net.Models
 
                 }
             }
+            	conn.Close();
             return entidad;
         }
 
@@ -310,6 +315,7 @@ namespace juegoCartas_net.Models
 
 				}
 			}
+            	conn.Close();
 			return res;
 		}
     }

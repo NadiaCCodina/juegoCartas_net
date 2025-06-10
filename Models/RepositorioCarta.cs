@@ -34,6 +34,7 @@ namespace juegoCartas_net.Models
 				
 				}
 			}
+            conn.Close();
 			return res;
         }
 
@@ -85,6 +86,7 @@ namespace juegoCartas_net.Models
 				
 				}
 			}
+            conn.Close();
 			return e;
         }
  public IList<Carta> ObtenerPorIdUsuarioRandom(int id)
@@ -145,6 +147,7 @@ JOIN cara cara ON cara.id = p.caraId;
                     }
                 }
             }
+            conn.Close();
             return res;
         }
 
@@ -188,6 +191,7 @@ JOIN cara cara ON cara.id = p.caraId;
                     }
                 }
             }
+            conn.Close();
             return res;
         }
 

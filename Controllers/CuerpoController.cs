@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace juegoCartas_net.Controllers
 {
- [Authorize(Policy = "Administrador")]
+    [Authorize(Policy = "Administrador")]
     public class CuerpoController : Controller
     {
         private readonly IConfiguration configuration;
@@ -121,30 +121,49 @@ namespace juegoCartas_net.Controllers
                 throw;
             }
         }
-        	[HttpPost]
-		[ValidateAntiForgeryToken]
-		
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+
         public ActionResult Edit(int id, Cuerpo entidad)
-		{
-			
-			Cuerpo c = null;
-			try
-			{
-				c = repositorio.ObtenerPorId(id);
-		
-				c.Nombre = entidad.Nombre;
-				c.Caracteristica = entidad.Caracteristica;
-				c.ImagenFile = entidad.ImagenFile;		
-                c.Vida = entidad.Vida;			
-				repositorio.Modificacion(c);
-				TempData["Mensaje"] = "Datos guardados correctamente";
-				return RedirectToAction(nameof(Index));
-			}
-			catch (Exception ex)
-			{
-				throw;
-			}
-		}
+        {
+
+            Cuerpo c = null;
+            try
+            {
+                c = repositorio.ObtenerPorId(id);
+
+                c.Nombre = entidad.Nombre;
+                c.Caracteristica = entidad.Caracteristica;
+                if (entidad.ImagenFile != null && entidad.ImagenFile.Length > 0)
+                {
+                    string wwwPath = environment.WebRootPath;
+                    string path = Path.Combine(wwwPath, "imagenes");
+
+                    if (!Directory.Exists(path))
+                    {
+                        Directory.CreateDirectory(path);
+                    }
+
+                    string fileName = "Cuerpo_" + id + Path.GetExtension(entidad.ImagenFile.FileName);
+                    string pathCompleto = Path.Combine(path, fileName);
+
+                    c.Imagen = Path.Combine("/imagenes", fileName);
+
+                    using (FileStream stream = new FileStream(pathCompleto, FileMode.Create))
+                    {
+                        entidad.ImagenFile.CopyTo(stream);
+                    }
+                }
+                c.Vida = entidad.Vida;
+                repositorio.Modificacion(c);
+                TempData["Mensaje"] = "Datos guardados correctamente";
+                return RedirectToAction(nameof(Index));
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
 
     }
 }

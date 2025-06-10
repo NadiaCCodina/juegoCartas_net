@@ -1,0 +1,45 @@
+
+
+@{
+	ViewData["Title"] = "Index";
+
+}
+
+<h1>Cuerpo</h1>
+
+<p>
+	<a asp-action="Create" class="btn btn-success">Crear nuevo</a>
+</p>
+<table class="table table-bordered table-hover table-striped align-middle">
+	<thead class="thead-dark">
+
+		<tr>
+			<th>
+				Resultado
+			</th>
+			<th>
+				Cantidad
+			</th>
+
+		</tr>
+	</thead>
+	@* <tbody>
+		@foreach (var item in res.resultadoJson)
+		{
+			<tr>
+				<td>
+					@Html.DisplayFor(modelItem => item.resultado)
+				</td>
+				<td>
+					@Html.DisplayFor(modelItem => item.total)
+				</td>
+				
+
+				<td>
+					<a asp-action="Edit" asp-route-id="@item.Id" title="Editar">Editar</a>&nbsp;
+					<a asp-action="Eliminar" asp-route-id="@item.Id" title="Eliminar">Eliminar</a>
+				</td>
+			</tr>
+		}
+	</tbody> *@
+</table>

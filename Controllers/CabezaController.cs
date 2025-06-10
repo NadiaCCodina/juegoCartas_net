@@ -76,8 +76,8 @@ namespace juegoCartas_net.Controllers
                 return View(c);
             }
 
-            try
-            {
+            // try
+            // {
                 if (c.ImagenFile != null)
                 {
                     string wwwPath = environment.WebRootPath;
@@ -104,12 +104,12 @@ namespace juegoCartas_net.Controllers
 
                 repositorio.Alta(c);
                 return RedirectToAction(nameof(Index));
-            }
-            catch (Exception ex)
-            {
-                ModelState.AddModelError("", "Error al crear la Cabeza: " + ex.Message);
-                return View(c);
-            }
+            // }
+            // catch (Exception ex)
+            // {
+            //     ModelState.AddModelError("", "Error al crear la Cabeza: " + ex.Message);
+            //     return View(c);
+            // }
         }
 
         public ActionResult Edit(int id)
@@ -128,28 +128,53 @@ namespace juegoCartas_net.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
 
-        public ActionResult Edit(int id, Cabeza entidad)
+    public IActionResult Edit(int id, Cabeza entidad)
+{
+    try
+    {
+        var c = repositorio.ObtenerPorId(id);
+
+        if (c == null)
         {
+            return NotFound();
+        }
 
-            Cabeza c = null;
-            try
+        c.Nombre = entidad.Nombre;
+        c.Caracteristica = entidad.Caracteristica;
+        c.Ataque = entidad.Ataque;
+
+        if (entidad.ImagenFile != null && entidad.ImagenFile.Length > 0)
+        {
+            string wwwPath = environment.WebRootPath;
+            string path = Path.Combine(wwwPath, "imagenes");
+
+            if (!Directory.Exists(path))
             {
-                c = repositorio.ObtenerPorId(id);
-
-                c.Nombre = entidad.Nombre;
-                c.Caracteristica = entidad.Caracteristica;
-                c.Ataque = entidad.Ataque;
-                c.ImagenFile = entidad.ImagenFile;
-                repositorio.Modificacion(c);
-                TempData["Mensaje"] = "Datos guardados correctamente";
-                return RedirectToAction(nameof(Index));
+                Directory.CreateDirectory(path);
             }
-            catch (Exception ex)
+
+            string fileName = "cabeza_" + id + Path.GetExtension(entidad.ImagenFile.FileName);
+            string pathCompleto = Path.Combine(path, fileName);
+
+            c.Imagen = Path.Combine("/imagenes", fileName);
+
+            using (FileStream stream = new FileStream(pathCompleto, FileMode.Create))
             {
-                ModelState.AddModelError("", "Error al crear la Cabeza: " + ex.Message);
-                return View(entidad);
+                entidad.ImagenFile.CopyTo(stream);
             }
         }
+
+        repositorio.Modificacion(c);
+        TempData["Mensaje"] = "Datos guardados correctamente";
+        return RedirectToAction(nameof(Index));
+    }
+    catch (Exception ex)
+    {
+        ModelState.AddModelError("", "Error al modificar la Cabeza: " + ex.Message);
+        return View(entidad);
+    }
+}
+
 
     }
 }

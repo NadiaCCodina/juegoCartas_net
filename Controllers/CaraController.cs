@@ -1,6 +1,7 @@
-using juegoCartas_net.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+
+using juegoCartas_net.Models;
 
 namespace juegoCartas_net.Controllers
 {
@@ -21,8 +22,8 @@ namespace juegoCartas_net.Controllers
 
         public ActionResult Index()
         {
-            var cuerpos = repositorio.ObtenerTodos();
-            return View(cuerpos);
+            var cara = repositorio.ObtenerTodos();
+            return View(cara);
         }
 
         public ActionResult Create()
@@ -31,6 +32,12 @@ namespace juegoCartas_net.Controllers
             return View();
         }
 
+[HttpGet]
+public IActionResult ObtenerTodas()
+{
+    var caras = repositorio.ObtenerTodos();
+    return Json(caras);
+}
 
         // POST: Cabeza/Create
         // [HttpPost]
@@ -133,7 +140,26 @@ namespace juegoCartas_net.Controllers
             c.Caracteristica = entidad.Caracteristica;
             c.Ataque = entidad.Ataque;
             c.Tipo = entidad.Tipo;
-            c.ImagenFile = entidad.ImagenFile;
+           if (entidad.ImagenFile != null && entidad.ImagenFile.Length > 0)
+        {
+            string wwwPath = environment.WebRootPath;
+            string path = Path.Combine(wwwPath, "imagenes");
+
+            if (!Directory.Exists(path))
+            {
+                Directory.CreateDirectory(path);
+            }
+
+            string fileName = "cara_" + id + Path.GetExtension(entidad.ImagenFile.FileName);
+            string pathCompleto = Path.Combine(path, fileName);
+
+            c.Imagen = Path.Combine("/imagenes", fileName);
+
+            using (FileStream stream = new FileStream(pathCompleto, FileMode.Create))
+            {
+                entidad.ImagenFile.CopyTo(stream);
+            }
+        }
             repositorio.Modificacion(c);
             TempData["Mensaje"] = "Datos guardados correctamente";
             return RedirectToAction(nameof(Index));

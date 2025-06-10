@@ -56,7 +56,9 @@
     <button type="button" class="btn btn-dark btn-lg" onclick="Jugar()">Aceptar Partida</button>
   </div>
 </div>
-
+ <div style="display: flex; justify-content: flex-end;">
+    <a asp-controller= "Usuario" asp-action="PerfilCartas" class="btn btn-dark">Volver</a>
+</div>
 <script>
   function Jugar() {
     var contrincanteId = document.getElementById('contrincanteId').value;

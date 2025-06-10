@@ -3,9 +3,9 @@
   ViewData["Title"] = "3D Flip Card";
   Layout = "~/Views/Shared/_Layout.cshtml";
   var listaCartas = ViewBag.Cartas;
-  string tipo= null;
+   string tipo= null;
 }
- 
+
 <div class="conteiner-usuario">
   <div class="card usuario">
     <div class="usuario-img">
@@ -14,61 +14,164 @@
     <div class="usuario-info">
       <h1>@Model.Nombre</h1>
       <p class="title">Jugador</p>
-      <p>Harvard University</p>
+      <p>Email: @Model.Email</p>
+      <p>Monedas Disponibles: @Model.PuntosHabilidad</p>
+      <input id="id" type="hidden" value=@Model.Id />
       <input id="id" type= "hidden" value=@Model.Id />
       <a class="btn btn-dark" asp-action="Edit" asp-route-id="@Model.Id" title="Editar"> Modificar Perfil</a>&nbsp;
-    
+     <a class="btn btn-dark" asp-controller="Personaje" asp-action="CreateCartaPersonaje">
+        Crear Personaje
+    </a>
     </div>
   </div>
 </div>
 
-<div class="botones-usuario">
-    <a class="btn btn-dark" asp-controller="Personaje" asp-action="CreateCartaPersonaje">
-        Crear Personaje
-    </a>
-    <a class="btn btn-dark" asp-controller="Enfrentamiento" asp-action="Cartas" asp-route-id="@Model.Id">
-        Jugar
-    </a>
-</div>
-
-@* <div><a asp-controller="Enfrentamiento" class="btn btn-dark" asp-action="Cartas" asp-route-id="@Model.Id" title="Cartas"> Jugar</a>&nbsp;</div>  *@
-<div class="container-cartas">
-  @foreach (var car in listaCartas)
-  {
-    <div class="wrapper">
-      <div class="card front-face">
-        <img src="@car.Imagen" />
-      </div>
-      <div class="card back-face">
-        <img src="@Model.Avatar" />
-
-        <div class="info">
-
+<h2 class="text-center text-light">Selecciona 3 cartas para jugar</h2>
+<form  id="form-juego" method="post" asp-action="Partida" asp-controller="Enfrentamiento">
+   <input type="hidden" name="retadorId" value="@Model?.Id" />
+  <div class="container-cartas">
+    @foreach (var car in listaCartas)
+    {
+      <div class="wrapper">
+        <div class="card front-face" value="@car.Id" data-carta-id="@car.Id">
+          <img src="@car.Imagen" />
+          <div class="check-overlay" id="check-front-@car.Id">
+            ✔
+          </div>
         </div>
-         
+
+
+        <div class="card back-face carta-seleccionable" id="carta-@car.Id" data-carta-id="@car.Id">
+
+ 
+          <div class="text-center text-light">
+            <h4>@car.PersonajeNombre</h4>
+               
         @if (@car.Tipo == 1) {
           tipo = "Mele";
         }else{
           tipo = "Rango";
         }
-        <h2>@car.PuntosHabilidad</h2>
+        <h4>@car.PuntosHabilidad</h4>
         <h6>Vida @car.Vida</h6>
         <h6>Ataque @car.Ataque</h6>
         <h6>Tipo @tipo</h6>
         <h6>@car.PersonajeNombre</h6>
 
-
+            <label>
+              <input type="checkbox" class="carta-checkbox" name="cartasSeleccionadas" value="@car.Id"
+                data-carta-id="@car.Id" />
+              Seleccionar
+            </label>
+          </div>
+        </div>
       </div>
+    }
+    <div style="text-align: center; margin-top: 20px;">
+      <button type="submit" class="btn btn-dark btn-lg">Jugar</button>
     </div>
+
+</form>
+@section Scripts{
+<script>
+  const maxSeleccion = 3;
+
+  function actualizarCheckVisual(cartaId, seleccionado) {
+    const checkFront = document.getElementById(`check-front-${cartaId}`);
+    if (checkFront) {
+      checkFront.style.display = seleccionado ? 'block' : 'none';
+    }
   }
 
+  document.querySelectorAll('.carta-seleccionable').forEach(carta => {
+    carta.addEventListener('click', function (e) {
+      if (e.target.tagName === 'INPUT') return;
 
-</div>
+      const checkbox = this.querySelector('.carta-checkbox');
+      const cartaId = checkbox.dataset.cartaId;
+
+      if (checkbox.checked) {
+        checkbox.checked = false;
+        this.classList.remove('selected');
+        actualizarCheckVisual(cartaId, false);
+        return;
+      }
+
+      const seleccionadas = document.querySelectorAll('.carta-checkbox:checked');
+      if (seleccionadas.length >= maxSeleccion) {
+        alert("Solo puedes seleccionar hasta 3 cartas.");
+        return;
+      }
+
+      checkbox.checked = true;
+      this.classList.add('selected');
+      actualizarCheckVisual(cartaId, true);
+    });
+  });
+
+  document.querySelectorAll('.carta-checkbox').forEach(cb => {
+    cb.addEventListener('change', () => {
+      const seleccionadas = document.querySelectorAll('.carta-checkbox:checked');
+
+      if (seleccionadas.length > maxSeleccion) {
+        cb.checked = false;
+        alert("Solo puedes seleccionar hasta 3 cartas.");
+        return;
+      }
+
+      const cartaId = cb.dataset.cartaId;
+      const carta = document.getElementById(`carta-${cartaId}`);
+
+      if (cb.checked) {
+        carta.classList.add("selected");
+      } else {
+        carta.classList.remove("selected");
+      }
+
+      actualizarCheckVisual(cartaId, cb.checked);
+    });
+  });
+
+  
+  document.getElementById("form-juego").addEventListener("submit", function (e) {
+    const seleccionadas = document.querySelectorAll(".carta-checkbox:checked");
+
+    if (seleccionadas.length !== maxSeleccion) {
+      e.preventDefault(); // Evita que se envíe el formulario
+      alert("Debes seleccionar exactamente 3 cartas para jugar.");
+    }
+  });
+</script>
+
+
+}
+
 
 @section Styles {
   <link rel="stylesheet" href="~/css/style.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" />
   <style>
+    .selected {
+      border: 3px solid rgb(0, 0, 0);
+      box-shadow: 0 0 10px #ffffff;
+    }
+
+    .check-overlay {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      background-color: rgba(0, 0, 0, 0.85);
+      /* verde */
+      color: white;
+      font-size: 24px;
+      padding: 4px 8px;
+      border-radius: 50%;
+      display: none;
+      /* oculto por defecto */
+      z-index: 10;
+    }
+
+
     .container-cartas {
       display: flex;
       flex-wrap: wrap;
@@ -99,8 +202,8 @@
     }
 
     .wrapper {
-      height: 300px;
-      width: 280px;
+      height: 280px;
+      width: 200px;
       position: relative;
       transform-style: preserve-3d;
       perspective: 1000px;
@@ -132,6 +235,8 @@
     }
 
     .wrapper .back-face {
+      background-color: #000000;
+      color: ;
       display: flex;
       align-items: center;
       justify-content: space-evenly;
@@ -145,8 +250,9 @@
     }
 
     .wrapper .back-face img {
-      height: 100px;
-      width: 100px;
+       height: 50px;
+      width: 50px;
+     
       padding: 5px;
       border-radius: 50%;
       background: linear-gradient(375deg, #797979, #000000);
@@ -167,9 +273,9 @@
 
     .back-face ul a {
       display: block;
-      height: 40px;
-      width: 40px;
-      color: #fff;
+      height: 15px;
+      width: 15px;
+      color: #000000;
       text-align: center;
       margin: 0 5px;
       line-height: 38px;
@@ -186,59 +292,55 @@
 
     }
 
-   .card.usuario {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  max-width: 600px;
-  margin: 20px auto;
-  background: #fff;
-  padding: 20px;
-  border-radius: 10px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-}
+    .card.usuario {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      max-width: 600px;
+      margin: 20px auto;
+      background: #fff;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
 
-.usuario-img img {
-  width: 150px;
-  height: 150px;
-  border-radius: 50%;
-  object-fit: cover;
-  margin-right: 20px;
-}
+    .usuario-img img {
+      width: 150px;
+      height: 150px;
+      border-radius: 50%;
+      object-fit: cover;
+      margin-right: 20px;
+    }
 
-.usuario-info {
-  flex: 1;
-  text-align: left;
-}
+    .usuario-info {
+      flex: 1;
+      text-align: left;
+    }
 
-.usuario-info h1 {
-  font-size: 24px;
-  margin-bottom: 10px;
-}
+    .usuario-info h1 {
+      font-size: 24px;
+      margin-bottom: 10px;
+    }
 
-.usuario-info .title {
-  font-size: 18px;
-  color: grey;
-  margin-bottom: 5px;
-}
-.botones-usuario {
-  display: flex;
-  justify-content: center;
-  gap: 20px;
-  margin: 20px auto;
-}
+    .usuario-info .title {
+      font-size: 18px;
+      color: grey;
+      margin-bottom: 5px;
+    }
 
-.botones-usuario .btn {
-  min-width: 150px;
-  font-weight: bold;
-  transition: background 0.3s ease;
-}
-
-.botones-usuario .btn:hover {
-  background-color: #343a40;
-  color: #1cc7d0;
-}
-
+    .container {
+      display: block;
+      position: relative;
+      padding-left: 35px;
+      margin-bottom: 12px;
+      cursor: pointer;
+      font-size: 22px;
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      user-select: none;
+    }
   </style>
+
 
 }

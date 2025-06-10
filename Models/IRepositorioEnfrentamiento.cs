@@ -9,6 +9,6 @@ namespace juegoCartas_net.Models
 {
     public interface IRepositorioEnfrentamiento : IRepositorio<Enfrentamiento>
     {
-      
+        public string ObtenerResultadosJson(int retadorId);
     }
 }

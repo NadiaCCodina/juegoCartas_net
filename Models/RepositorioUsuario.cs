@@ -13,6 +13,7 @@ namespace juegoCartas_net.Models
         public IList<Usuario> ObtenerTodos()
         {
             IList<Usuario> res = new List<Usuario>();
+			
             MySqlConnection conn = ObtenerConexion();
             {
                 string sql = @"
@@ -41,17 +42,25 @@ namespace juegoCartas_net.Models
 
                 }
             }
+			conn.Close();
             return res;
         }
 
-   public Usuario ObtenerRandom()
+   public int ObtenerRandom()
         {
-			Usuario random = null;
+			int random=0 ;
 			    MySqlConnection conn = ObtenerConexion();
 			{
-				string sql = @" SELECT t.id FROM Usuario t JOIN 
-				(SELECT(FLOOR(max(id) * rand())) as maxid FROM Usuario)
-				 as tt on t.id >= tt.maxid LIMIT 1";
+				string sql = @" SELECT id
+							FROM Usuario
+							WHERE id >= (
+   							 SELECT FLOOR(
+       						 (SELECT MIN(id) FROM Usuario) + RAND() * 
+        					((SELECT MAX(id) FROM Usuario) - (SELECT MIN(id) FROM Usuario))
+							 )
+								)
+							ORDER BY id
+							LIMIT 1;";
 				   using (var command = new MySqlCommand(sql, conn))
 				{
 			
@@ -59,14 +68,14 @@ namespace juegoCartas_net.Models
 					var reader = command.ExecuteReader();
 					if (reader.Read())
 					{
-						random = new Usuario
-						{
-							Id = reader.GetInt32("Id"),
+
+						random = reader.GetInt32("Id");
 							
-						};
+						
 					}
 				}
 			}
+			conn.Close();
 			return random;
         }
 
@@ -97,6 +106,7 @@ namespace juegoCartas_net.Models
 
 				}
 			}
+			conn.Close();
 			return res;
 		}
 
@@ -123,22 +133,25 @@ namespace juegoCartas_net.Models
 
                 }
             }
+			conn.Close();
             return res;
         }
+		
         	public int Baja(int id)
 		{
 			int res = -1;
-			  MySqlConnection conn = ObtenerConexion();
+			MySqlConnection conn = ObtenerConexion();
 			{
 				string sql = "DELETE FROM `usuario` WHERE `id`= @id";
-				 using (var command = new MySqlCommand(sql, conn))
+				using (var command = new MySqlCommand(sql, conn))
 				{
 					command.CommandType = CommandType.Text;
 					command.Parameters.AddWithValue("@id", id);
 					res = command.ExecuteNonQuery();
-				
+
 				}
 			}
+			conn.Close();
 			return res;
 		}
         
@@ -148,9 +161,10 @@ namespace juegoCartas_net.Models
 			    MySqlConnection conn = ObtenerConexion();
 			{
 				string sql = @"SELECT 
-					Id, Nombre,  Avatar,  Clave
+					usuario.Id, Nombre,  Avatar,  Clave, Email, puntos_habilidad	 
 					FROM Usuario
-					WHERE Id=@id";
+                    JOIN mazo m ON m.usuario_id = usuario.Id
+					WHERE usuario.Id=@id";
 				   using (var command = new MySqlCommand(sql, conn))
 				{
 					command.Parameters.AddWithValue("@id", id);
@@ -163,16 +177,18 @@ namespace juegoCartas_net.Models
 						{
 							Id = reader.GetInt32("Id"),
 							Nombre = reader.GetString("Nombre"),
-						
+
 							Avatar = reader["Avatar"] == DBNull.Value ? "" : reader.GetString("Avatar"),
-						
+							Email = reader.GetString("Email"),
 							Clave = reader.GetString("Clave"),
+							PuntosHabilidad = reader.GetInt32("puntos_habilidad"),
 						
 						};
 					}
 				
 				}
 			}
+			conn.Close();
 			return e;
 		}
 
@@ -207,6 +223,7 @@ namespace juegoCartas_net.Models
 				
 				}
 			}
+			conn.Close();
 			return e;
 		}
 

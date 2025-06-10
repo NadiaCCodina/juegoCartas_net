@@ -15,8 +15,8 @@ namespace juegoCartas_net.Controllers
         private readonly IConfiguration configuration;
         private readonly IWebHostEnvironment environment;
         private readonly IRepositorioUsuario repositorio;
-         private readonly IRepositorioCarta repoCarta;
-          private readonly IRepositorioMazo repoMazo;
+        private readonly IRepositorioCarta repoCarta;
+        private readonly IRepositorioMazo repoMazo;
 
 
         public UsuarioController(IConfiguration configuration, IWebHostEnvironment environment, IRepositorioUsuario repositorio, IRepositorioCarta repoCarta, IRepositorioMazo repoMazo)
@@ -25,7 +25,7 @@ namespace juegoCartas_net.Controllers
             this.environment = environment;
             this.repositorio = repositorio;
             this.repoCarta = repoCarta;
-             this.repoMazo = repoMazo;
+            this.repoMazo = repoMazo;
         }
         // [Route("[controller]/Index/")]
         // [Authorize(Policy = "Administrador")]
@@ -33,7 +33,6 @@ namespace juegoCartas_net.Controllers
         {
             int usuarioActualId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
             ViewBag.Cartas = repoCarta.ObtenerPorIdUsuario(usuarioActualId);
-            //var cartas = repoCarta.ObtenerPorIdUsuario(8);
             var usuario = repositorio.ObtenerPorId(usuarioActualId);
             return View(usuario);
         }
@@ -61,35 +60,35 @@ namespace juegoCartas_net.Controllers
                                 iterationCount: 1000,
                                 numBytesRequested: 256 / 8));
                 u.Clave = hashed;
-               
+
                 var nbreRnd = Guid.NewGuid();//posible nombre aleatorio
-              
+
                 int res = repositorio.Alta(u);
-                  Mazo m = new Mazo
+                Mazo m = new Mazo
                 {
                     UsuarioId = u.Id,
 
                 };
                 int respMazo = repoMazo.Alta(m);
                 if (u.AvatarFile != null && u.Id > 0)
-            {
-                string wwwPath = environment.WebRootPath;
-                string path = Path.Combine(wwwPath, "Uploads");
-                if (!Directory.Exists(path))
                 {
-                    Directory.CreateDirectory(path);
-                }
+                    string wwwPath = environment.WebRootPath;
+                    string path = Path.Combine(wwwPath, "Uploads");
+                    if (!Directory.Exists(path))
+                    {
+                        Directory.CreateDirectory(path);
+                    }
 
-                string fileName = "avatar_" + u.Id + Path.GetExtension(u.AvatarFile.FileName);
-                string pathCompleto = Path.Combine(path, fileName);
-                u.Avatar = Path.Combine("/Uploads", fileName);
-                using (FileStream stream = new FileStream(pathCompleto, FileMode.Create))
-                {
-                    u.AvatarFile.CopyTo(stream);
+                    string fileName = "avatar_" + u.Id + Path.GetExtension(u.AvatarFile.FileName);
+                    string pathCompleto = Path.Combine(path, fileName);
+                    u.Avatar = Path.Combine("/Uploads", fileName);
+                    using (FileStream stream = new FileStream(pathCompleto, FileMode.Create))
+                    {
+                        u.AvatarFile.CopyTo(stream);
+                    }
+                    repositorio.Modificacion(u);
                 }
-                repositorio.Modificacion(u);
-            }
-               return RedirectToAction("Index", "Home");
+                return RedirectToAction("Index", "Home");
             }
             catch (Exception ex)
             {
@@ -97,8 +96,8 @@ namespace juegoCartas_net.Controllers
                 return View();
             }
         }
-        // GET: Usuarios/Edit/5
-        // [Authorize]
+
+        [Authorize]
         public ActionResult Perfil()
         {
             ViewData["Title"] = "Mi perfil";
@@ -107,7 +106,6 @@ namespace juegoCartas_net.Controllers
             return View("Edit", u);
         }
 
-        // GET: Usuarios/Edit/5
         // [Authorize(Policy = "Administrador")]
         public ActionResult Edit(int id)
         {
@@ -119,7 +117,7 @@ namespace juegoCartas_net.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        // [Authorize]
+        [Authorize]
         public ActionResult Edit(int id, Usuario u)
         {
             var vista = nameof(Edit);
@@ -127,22 +125,19 @@ namespace juegoCartas_net.Controllers
             {
                 if (!User.IsInRole("Administrador"))
                 {
-                    
-                    vista = nameof(Perfil);//solo puedo ver mi perfil
+                    Console.WriteLine("¿avatar?: " + u.AvatarFile);
+                    vista = nameof(Perfil);
                     var usuarioActual = repositorio.ObtenerPorEmail(User.Identity.Name);
-                       Console.WriteLine("¿avatar?: " +u.AvatarFile );
-                            Console.WriteLine("¿usuario id?: " +usuarioActual );
+                    Console.WriteLine("¿avatar?: " + u.AvatarFile);
+                    Console.WriteLine("¿usuario id?: " + usuarioActual);
                     if (usuarioActual.Id != id)
-                    {//si no es admin, solo puede modificarse él mismo
+                    {
                         return RedirectToAction(nameof(Index), "Home");
                     }
                     else
                     {
 
                         usuarioActual.Nombre = u.Nombre;
-
-
-
                         if (!string.IsNullOrWhiteSpace(u.Clave))
                         {
                             string hashed = Convert.ToBase64String(KeyDerivation.Pbkdf2(
@@ -159,8 +154,7 @@ namespace juegoCartas_net.Controllers
 
                         if (u.AvatarFile != null)
                         {
-                            Console.WriteLine(u.AvatarFile);
-                            Console.WriteLine(usuarioActual.Id);
+                            Console.WriteLine("¿avatar?: " + u.AvatarFile);
                             u.Id = usuarioActual.Id;
                             string wwwPath = environment.WebRootPath;
                             string path = Path.Combine(wwwPath, "Uploads");
@@ -168,17 +162,16 @@ namespace juegoCartas_net.Controllers
                             {
                                 Directory.CreateDirectory(path);
                             }
-                            //Path.GetFileName(u.AvatarFile.FileName);//este nombre se puede repetir
                             string fileName = "avatar_" + u.Id + Path.GetExtension(u.AvatarFile.FileName);
                             string pathCompleto = Path.Combine(path, fileName);
                             usuarioActual.Avatar = Path.Combine("/Uploads", fileName);
-                            // Esta operación guarda la foto en memoria en la ruta que necesitamos
                             using (FileStream stream = new FileStream(pathCompleto, FileMode.Create))
                             {
                                 u.AvatarFile.CopyTo(stream);
                             }
+                            repositorio.Modificacion(usuarioActual);
                         }
-                        repositorio.Modificacion(usuarioActual);
+                      
                         TempData["Mensaje"] = "Datos guardados correctamente";
                         return RedirectToAction(nameof(PerfilCartas), "Usuario");
 
@@ -187,6 +180,7 @@ namespace juegoCartas_net.Controllers
                 else
                 {
                     u.Id = id;
+
                     if (!string.IsNullOrWhiteSpace(u.Clave))
                     {
                         string hashed = Convert.ToBase64String(KeyDerivation.Pbkdf2(
@@ -195,16 +189,37 @@ namespace juegoCartas_net.Controllers
                                         prf: KeyDerivationPrf.HMACSHA1,
                                         iterationCount: 1000,
                                         numBytesRequested: 256 / 8));
-
-
                         u.Clave = hashed;
                     }
-                    
-                     repositorio.Modificacion(u);
-                    TempData["Mensaje"] = "Datos guardados correctamente";
-                   return RedirectToAction(nameof(Index), "Home");
+                    else
+                    {
+                        var original = repositorio.ObtenerPorId(u.Id);
+                        u.Clave = original.Clave;
+                    }
 
+                    if (u.AvatarFile != null)
+                    {
+                        string wwwPath = environment.WebRootPath;
+                        string path = Path.Combine(wwwPath, "Uploads");
+                        if (!Directory.Exists(path))
+                        {
+                            Directory.CreateDirectory(path);
+                        }
+                        string fileName = "avatar_" + u.Id + Path.GetExtension(u.AvatarFile.FileName);
+                        string pathCompleto = Path.Combine(path, fileName);
+                        u.Avatar = Path.Combine("/Uploads", fileName);
+                        using (FileStream stream = new FileStream(pathCompleto, FileMode.Create))
+                        {
+                            u.AvatarFile.CopyTo(stream);
+                        }
+                    }
+                    Console.WriteLine("¿avatar?: " + u.AvatarFile);
+
+                    repositorio.Modificacion(u);
+                    TempData["Mensaje"] = "Datos guardados correctamente";
+                    return RedirectToAction(nameof(Index), "Home");
                 }
+
             }
             catch (Exception ex)
             {

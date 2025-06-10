@@ -8,7 +8,7 @@
 
 <h3>Estas seguro que deseas Eliminar este Cuerpo?</h3>
 <div>
-    <h4>Inmueble</h4>
+    <h4>Cuerpo</h4>
     <hr />
     <dl class="row">
         <dt class = "col-sm-2">
@@ -33,7 +33,11 @@
     </dl>
     
     <form asp-action="Eliminar">
-        <input type="submit" value="Delete" class="btn btn-danger" /> |
-        <a asp-action="Index">Back to List</a>
+        <input style= "margin-top: 20px;" type="submit" value="Delete" class="btn btn-danger" /> |
+    
     </form>
+    
+<div>
+  <a style= "margin-top: 20px;" class="btn btn-info" asp-action="Index">Volver a la lista</a>
+</div>
 </div>
