@@ -20,7 +20,7 @@ namespace juegoCartas_net.Models
            	int res = -1;
 			MySqlConnection conn = ObtenerConexion();
 			{
-				string sql = @"INSERT INTO `cuerpo`( `imagen`, `caracteristica`, `nombre` vida) VALUES (@imagen,@caracteristica,@nombre, @vida);
+				string sql = @"INSERT INTO `cuerpo`( `imagen`, `caracteristica`, `nombre`, vida) VALUES (@imagen, @caracteristica, @nombre, @vida);
 					SELECT LAST_INSERT_ID();";
 				using (var command = new MySqlCommand(sql, conn))
 				{

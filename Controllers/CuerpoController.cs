@@ -80,7 +80,7 @@ namespace juegoCartas_net.Controllers
                 ModelState.AddModelError("", "Error al crear el cuerpo: " + ex.Message);
                 return View(c);
             }
-        }
+       }
 
         public ActionResult Eliminar(int id)
         {

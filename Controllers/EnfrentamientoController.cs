@@ -3,6 +3,7 @@ using System.Security.Claims;
 using Microsoft.AspNetCore.Mvc;
 
 using juegoCartas_net.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace juegoCartas_net.Controllers
 {
@@ -32,12 +33,12 @@ namespace juegoCartas_net.Controllers
 
 
         }
-
+        [Authorize]
         public ActionResult Cartas()
         {
             int usuarioActualId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
             ViewBag.Cartas = repoCarta.ObtenerPorIdUsuario(usuarioActualId);
-            //var cartas = repoCarta.ObtenerPorIdUsuario(8);
+            
             var usuario = repoUsuario.ObtenerPorId(usuarioActualId);
             return View(usuario);
         }
@@ -46,8 +47,8 @@ namespace juegoCartas_net.Controllers
         {
 
 
-            // try
-            // {
+            try
+            {
             List<Carta> cartasRetador = new List<Carta>();
             foreach (int id in cartasRetadorIds)
             {
@@ -135,42 +136,17 @@ namespace juegoCartas_net.Controllers
 
 
             repositorio.Alta(enf);
-            Console.WriteLine("CARTAS RETADOR:");
-            foreach (var carta in cartasRetador)
-            {
-                Console.WriteLine($"ID: {carta.Id}, Nombre: {carta.PersonajeNombre}");
-            }
-            Console.WriteLine("Total cartas: " + cartasRetador.Count);
 
 
-
-            ViewBag.CartasRetador = cartasRetador;
-            ViewBag.CartasContrincante = cartasContrincante;
-            ViewBag.CartasRetador = cartasRetador;
-            ViewBag.RetadorId = retadorId;
-            ViewBag.ContrincanteId = contrincanteId;
-            ViewBag.Ganador = ganador;
-
-            ViewBag.CartasGanador = CartasGanador;
-            ViewBag.Ganador = ganador;
             return Json(new { ganadorId });
-            // }
-            // catch (Exception ex)
-            // {
-            //     ModelState.AddModelError("", "Error al crear el cuerpo: " + ex.Message);
-            //     return RedirectToAction(nameof(Index));
-            // }
-        }
-
-   public IActionResult indexPorUsuario()
-        {
-            var resultado = repositorio.ObtenerResultadosJson(12);
-            return Json(new
+            }
+            catch (Exception ex)
             {
-                resultadoJson = resultado,
-
-            });
+                ModelState.AddModelError("", "Error al crear el cuerpo: " + ex.Message);
+                return RedirectToAction(nameof(Index));
+            }
         }
+
 
         [HttpPost]
         public IActionResult Partida(List<int> cartasSeleccionadas, int retadorId)

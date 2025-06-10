@@ -57,14 +57,14 @@ namespace juegoCartas_net.Models
         {
             throw new NotImplementedException();
         }
-        public string ObtenerResultadosJson(int retadorId)
+        public List<Dictionary<string, object>> ObtenerResultadosJson(int retadorId)
         {
             var resultados = new List<Dictionary<string, object>>();
             MySqlConnection conn = ObtenerConexion();
             {
 
                 string query = @"
-                SELECT `retador_id`, u.nombre, resultado, COUNT(resultado) AS total
+                SELECT `retador_id`, u.nombre,resultado, COUNT(resultado) AS total
                 FROM `enfrentamiento` 
                 JOIN usuario u ON u.id = retador_id
                 WHERE retador_id = @retadorId
@@ -93,7 +93,7 @@ namespace juegoCartas_net.Models
             }
 
             // Serializar a JSON
-            return JsonSerializer.Serialize(resultados, new JsonSerializerOptions { WriteIndented = true });
+            return resultados;
         }
 
 

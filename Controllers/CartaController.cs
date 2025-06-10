@@ -35,7 +35,7 @@ namespace juegoCartas_net.Controllers
 
 
         // POST: Cabeza/Create
-        // [HttpPost]
+         [HttpPost]
         [ValidateAntiForgeryToken]
    
         [HttpPost]
@@ -60,13 +60,13 @@ namespace juegoCartas_net.Controllers
 
                 };
                 int puntosPersonaje = repoPersonaje.ObtenerPorId(personajeId).PuntosHabilidad;
-                var puntos = mazoId.PuntosHabilidad - puntosPersonaje;
-               if (puntos >= 0)
+                var monedasRestantes = mazoId.PuntosHabilidad - puntosPersonaje;
+               if (monedasRestantes >= 0)
                 {
                     Mazo m = new Mazo
                     {
                         Id = mazoId.Id,
-                        PuntosHabilidad = puntos
+                        PuntosHabilidad = monedasRestantes
 
                     };
                     repoMazo.Modificacion(m);

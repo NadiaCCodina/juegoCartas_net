@@ -38,8 +38,9 @@ namespace juegoCartas_net.Controllers
                 return View(entidad);
             }
             catch (Exception ex)
-            {//poner breakpoints para detectar errores
-                throw;
+            {
+                 ModelState.AddModelError("", "Error cargar la vista" + ex.Message);
+                 return RedirectToAction(nameof(Index));
             }
         }
         [HttpPost]
@@ -53,7 +54,8 @@ namespace juegoCartas_net.Controllers
             }
             catch (Exception ex)
             {
-                throw;
+                 ModelState.AddModelError("", "Error al eliminar la Cabeza: " + ex.Message);
+                 return RedirectToAction(nameof(Index));
             }
         }
 
@@ -76,8 +78,8 @@ namespace juegoCartas_net.Controllers
                 return View(c);
             }
 
-            // try
-            // {
+            try
+            {
                 if (c.ImagenFile != null)
                 {
                     string wwwPath = environment.WebRootPath;
@@ -104,12 +106,12 @@ namespace juegoCartas_net.Controllers
 
                 repositorio.Alta(c);
                 return RedirectToAction(nameof(Index));
-            // }
-            // catch (Exception ex)
-            // {
-            //     ModelState.AddModelError("", "Error al crear la Cabeza: " + ex.Message);
-            //     return View(c);
-            // }
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("", "Error al crear la Cabeza: " + ex.Message);
+                return View(c);
+            }
         }
 
         public ActionResult Edit(int id)

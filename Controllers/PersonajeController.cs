@@ -66,25 +66,7 @@ namespace juegoCartas_net.Controllers
                 throw;
             }
         }
-  [Authorize(Policy = "Administrador")]
-        [Route("[controller]/buscarporpersonaje")]
-        public ActionResult BuscarPorPersonaje(int id )
-        {
-            try
-            {
-               
-                var personaje = repositorio.ObtenerPorId(id);
-               
-               
-              
-                return View("Edit", personaje);
 
-            }
-            catch (Exception ex)
-            {// Poner breakpoints para detectar errores
-                throw;
-            }
-        }
         [Authorize(Policy = "Administrador")]
         public ActionResult Create()
         {
@@ -101,7 +83,7 @@ namespace juegoCartas_net.Controllers
 
             });
         }
-
+        [Authorize]
         public ActionResult CreateCartaPersonaje()
         {
             string email = User.Identity.Name;
@@ -127,6 +109,7 @@ namespace juegoCartas_net.Controllers
             });
         }
         //Cambio el personaje segun la parte Elegida
+        [Authorize]
         public IActionResult cambio(int cara, int cabeza, int cuerpo)
         {
             var personaje = repositorio.ObtenerPorParte(cara, cabeza, cuerpo);
@@ -140,6 +123,7 @@ namespace juegoCartas_net.Controllers
         }
         [HttpGet]
         //Obtengo el personaje por defecto cuando cargo la pagina
+        [Authorize]
         public IActionResult ObtenerPersonaje()
         {
             var personaje = repositorio.ObtenerPorParte(1, 1, 1);
@@ -209,10 +193,31 @@ namespace juegoCartas_net.Controllers
             catch (Exception ex)
             {
                 ModelState.AddModelError("", "Error al crear el personaje: " + ex.Message);
-                return RedirectToAction(nameof(CreateCartaPersonaje));
+                return RedirectToAction(nameof(Lista));
             }
         }
+  //MUESTRA UN SOLO PERSONAJE
+        [Authorize(Policy = "Administrador")]
+        [Route("[controller]/buscarporpersonaje")]
+        public ActionResult BuscarPorPersonaje(int id)
+        {
+            try
+            {
 
+            var personaje = repositorio.ObtenerPorId(id);
+            IList<Personaje> res = new List<Personaje>();
+            res.Add(personaje);
+
+
+
+            return View("Index", res);
+
+        }
+        catch (Exception ex)
+        {
+            throw;
+        }
+        }
 
         [Authorize(Policy = "Administrador")]
         public ActionResult Edit(int id)
@@ -228,6 +233,7 @@ namespace juegoCartas_net.Controllers
                 throw;
             }
         }
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Policy = "Administrador")]
@@ -256,7 +262,7 @@ namespace juegoCartas_net.Controllers
             }
             catch (Exception ex)
             {
-
+                Console.WriteLine("Error editar " + ex);
                 ModelState.AddModelError("", "Error al editar: " + ex.Message);
                 return RedirectToAction(nameof(CreateCartaPersonaje));
             }
@@ -291,7 +297,7 @@ namespace juegoCartas_net.Controllers
             }
         }
         [HttpPost]
-        public ActionResult Eliminar(Cabeza entidad)
+        public ActionResult Eliminar(Personaje entidad)
         {
             try
             {

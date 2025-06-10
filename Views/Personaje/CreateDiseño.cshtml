@@ -4,6 +4,7 @@
 	var listaCaras = (IList<Cara>)ViewBag.Caras;
 	var listaCabezas = (IList<Cabeza>)ViewBag.Cabezas;
 	var listaCuerpo = (IList<Cuerpo>)ViewBag.Cuerpos;
+
 }
 
 <h1>Crear</h1>
@@ -11,7 +12,12 @@
 <h4>Personaje</h4>
 
 
-	
+@if (TempData["Mensaje"] != null)
+{
+    <div>
+        @TempData["Mensaje"]
+    </div>
+}
 <div class="row">
 	<div class="col-md-4">
 		<form asp-action="CreatePersonajeNuevo" enctype="multipart/form-data">
@@ -72,6 +78,6 @@
 </div>
 
 <div>
-	<a style= "margin-top: 20px;" class="btn btn-info" asp-action="Index">Volver a la lista</a>
+	<a style= "margin-top: 20px;" class="btn btn-info" asp-action="Lista">Volver a la lista</a>
 </div>
 

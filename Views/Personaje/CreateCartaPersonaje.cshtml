@@ -3,49 +3,44 @@
     ViewData["Title"] = "Create";
  var mazo = ViewBag.mazo;
 }
-
-<h1 class="text-white text-center">Monedas disponibles: @mazo.PuntosHabilidad</h1>
-<div class="container mt-4">
-    <div class="row">
-        <!-- caras  -->
-        <div class="col-md-3">
-            <h4 class="text-white text-center">Caras</h4>
-            <div id="cardContainerCara" class="card-grid"></div>
-        </div>
-
-         @* personaje *@
-        <div class="col-md-6 d-flex flex-column align-items-center">
-            <form asp-action="CrearCarta" asp-controller="Carta" enctype="multipart/form-data" method="post"
-                class="w-100">
-                <h3 class="text-center text-light">Personaje Seleccionado</h3>
-                <div id="cardContainerPesonaje" class="personaje-vista mb-3"></div>
-
-              
-                    <input type="submit" value="Crear Carta" class="btn btn-dark" />
-                
-            </form>
-        </div>
-
-        <!-- cabezas -->
-        <div class="col-md-3">
-            <h4 class="text-white text-center">Cabezas</h4>
-            <div id="cardContainerCabeza" class="card-grid"></div>
-        </div>
-    </div>
 @if (TempData["Mensaje"] != null)
 {
     <div id="mensaje-alerta" class="alert alert-dismissible fade show bg-white text-dark border fs-3" role="alert">
         @TempData["Mensaje"]
     </div>
 }
-    <!-- cuerpos-->
-    <div class="row mt-4">
-        <div class="col-12">
-            <h5 class="text-center">Cuerpos</h5>
-            <div id="cardContainer" class="card-grid-horizontal justify-content-center"></div>
-        </div>
+<div class="text-white text-center mb-2">
+    <h1>Monedas disponibles: @mazo.PuntosHabilidad</h1>
+</div>
+
+<div class="main-layout">
+    <!-- Caras -->
+    <div class="column">
+        <h4>Caras</h4>
+        <div id="cardContainerCara" class="card-grid-vertical"></div>
+    </div>
+
+    <!-- Personaje central -->
+    <div class="column-center">
+        <h4>Personaje Seleccionado</h4>
+        <form asp-action="CrearCarta" asp-controller="Carta" enctype="multipart/form-data" method="post">
+            <div id="cardContainerPesonaje" class="personaje-vista mb-2"></div>
+            <input type="submit" value="Crear Carta" class="btn btn-dark mt-2" />
+        </form>
+    </div>
+
+    <!-- Cabezas -->
+    <div class="column">
+        <h4>Cabezas</h4>
+        <div id="cardContainerCabeza" class="card-grid-vertical"></div>
     </div>
 </div>
+
+<!-- Cuerpos -->
+<div class="text-white text-center mt-3">
+    <h4>Cuerpos</h4>
+</div>
+<div id="cardContainer" class="card-grid-horizontal compact"></div>
 
 
 @section Scripts {
@@ -95,7 +90,7 @@
                                         <div class="card-body">
                                             <h2 class="card-title">${parte.nombre}</h2>
                                             <input id="caraId" type= "hidden" value=${parte.id} />
-                                            <p class="card-text"><strong>Tipo:</strong> ${tipo}</p>
+                                            <h3 class="card-text"><strong>Tipo:</strong> ${tipo}</h3>
                                         </div>
                                         </div>
                                     </button>
@@ -122,7 +117,7 @@
                                                                 <div class="card-body">
                                                                     <h2 class="card-title">${parte.nombre}</h2>
                                                                     <input id="cabezaId" type= "hidden" value=${parte.id}  />
-                                                                    <p class="card-text"><strong>Ataque:</strong> ${parte.ataque}</p>
+                                                                    <h3 class="card-text"><strong>Ataque:</strong> ${parte.ataque}</h3>
                                                                 </div>
                                                                 </div>
                                                             </button>
@@ -150,7 +145,7 @@
                                                             <div class="card-body">
                                                             <h2 class="card-title" >${parte.nombre}</h2>
                                                             <input id= "cuerpoId"  type= "hidden" ${parte.id}/>
-                                                            <p class="card-text"><strong>Vida:</strong> ${parte.vida}</p>
+                                                            <h3 class="card-text"><strong>Vida:</strong> ${parte.vida}</h3>
                                                         </div>
                                                         </div>
                                                     </button>
@@ -305,139 +300,122 @@
     </script>
 
     <style>
-        html,
-        body {
-            display: grid;
-            height: 100%;
-            width: 100%;
-            place-items: center;
-            background: linear-gradient(375deg, #797979, #000000);
-        }
+    html, body {
+    margin: 0;
+    padding: 0;
+    background: #1c1c1c;
+    color: #ffffff;
+    font-family: 'Segoe UI', sans-serif;
+}
 
-        button {
-            border: none;
-            background-color:transparent;
-        }
+h1, h4 {
+    margin: 8px 0;
+}
 
-        .card-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
-            gap: 12px;
-            max-height: 500px;
-            overflow-y: auto;
-            padding: 10px;
-        }
+.main-layout {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 20px;
+    gap: 10px;
+}
 
-        .card-grid-horizontal {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 12px;
-            justify-content: center;
-            padding: 10px;
-            max-height: 300px;
-            overflow-y: auto;
-        }
-       .conteiner{
-          width: 80%;
-       }
-        .card button,
-        .card {
-            all: unset;
-            cursor: pointer;
-            display: block;
-        }
+.column,
+.column-center {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
 
-        .card {
-            border-style: solid;
-            width: 100%;
-            max-width: 100px;
-            border-color: rgb(87, 87, 87);
-            border-radius: 12px;
-            overflow: hidden;
-            background-color: white;
-            box-shadow: none;
-            transition: transform 0.2s;
-            text-align: center;
-            display: flex;
-            flex-direction: column;
-              font-size: 0.2rem;
+.column-center {
+    max-width: 360px;
+}
 
-        }
+.card-grid-vertical {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+    gap: 8px;
+    width: 100%;
+    justify-items: center;
+}
 
-        .card:hover {
-            transform: translateY(-4px);
-        }
+.card-grid-horizontal.compact {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    padding: 10px 20px;
+}
 
-        .card-body {
-            padding: 6px 8px;
-            font-size: 0.75rem;
-            background-color: white;
-            border-color: red;
-        }
+.card {
+    background-color: white;
+    color: #000;
+    border-radius: 8px;
+    overflow: hidden;
+    width: 90px;
+    font-size: 0.75rem;
+    text-align: center;
+    transition: transform 0.2s ease;
+}
 
-        .card-title {
-            font-weight: bold;
-            font-size: 0.8rem;
-            margin-bottom: 2px;
-        }
+.card:hover {
+    transform: scale(1.03);
+}
 
-        .card-text {
-            font-size: 0.7rem;
+.card-img {
+    width: 100%;
+    height: 85px;
+    object-fit: cover;
+}
 
-            line-height: 1.2;
-        }
-        @* h4 {
-            font-size: 1.10rem;
+.card-body {
+    padding: 4px;
+}
 
-            line-height: 1.2;
-        } *@
+.card-title {
+    font-weight: bold;
+    font-size: 0.8rem;
+}
+
+.card-text {
+    font-size: 0.7rem;
+}
+
+.personaje-vista {
+    background-color: #f4f4f4;
+    border-radius: 10px;
+    padding: 10px;
+    color: #000;
+    text-align: center;
+    width: 100%;
+    min-height: 240px; 
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.personaje-vista img {
+    max-height: 200px; 
+    width: auto;
+    border-radius: 8px;
+    box-shadow: 0 0 8px rgba(0, 0, 0, 0.3);
+}
 
 
-        .card-img {
-            width: 100%;
-            height: 80px;
-            object-fit: cover;
-            border-radius: 12px 12px 0 0;
-        }
+.btn-dark {
+    padding: 6px 16px;
+    font-size: 1rem;
+    border-radius: 6px;
+    background-color: #333;
+    color: white;
+    border: none;
+}
 
+.btn-dark:hover {
+    background-color: #555;
+}
 
-
-
-
-        .personaje-vista {
-
-            text-align: center;
-            @* padding: 5px; *@
-            border: 2px dashed #ccc;
-            border-radius: 12px;
-            min-height: 200px;
-           
-            background-color: #f8f9fa;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .personaje-vista img {
-
-            max-height: 300px;
-            max-width: 100%;
-            object-fit: contain;
-            border-radius: 10px;
-        }
-
-        form {
-            width: 100%;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        form .btn-primary {
-            min-width: 150px;
-            font-size: 1rem;
-            padding: 8px 16px;
-        }
     </style>
 
 }

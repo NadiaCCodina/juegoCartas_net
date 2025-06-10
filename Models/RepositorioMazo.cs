@@ -23,7 +23,7 @@ namespace juegoCartas_net.Models
 				{
 					command.CommandType = CommandType.Text;
 					command.Parameters.AddWithValue("@usuario_id", u.UsuarioId);
-					command.Parameters.AddWithValue("@puntos_habilidad", 21);
+					command.Parameters.AddWithValue("@puntos_habilidad", 25);
 					res = Convert.ToInt32(command.ExecuteScalar());
 					u.Id = res;
 				

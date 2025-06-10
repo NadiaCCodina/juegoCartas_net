@@ -40,9 +40,9 @@ public IActionResult ObtenerTodas()
 }
 
         // POST: Cabeza/Create
-        // [HttpPost]
-        // [ValidateAntiForgeryToken]
-        // [Authorize(Policy = "Administrador")]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize(Policy = "Administrador")]
         [HttpPost]
         public ActionResult Create(Cara c)
         {
@@ -82,7 +82,7 @@ public IActionResult ObtenerTodas()
             }
             catch (Exception ex)
             {
-                ModelState.AddModelError("", "Error al crear la Cabeza: " + ex.Message);
+                ModelState.AddModelError("", "Error al crear la Cara: " + ex.Message);
                 return View(c);
             }
         }
@@ -94,12 +94,13 @@ public IActionResult ObtenerTodas()
                 return View(entidad);
             }
             catch (Exception ex)
-            {//poner breakpoints para detectar errores
-                throw;
+            {
+                  ModelState.AddModelError("", "Error al cargar la vista " + ex.Message);
+                 return RedirectToAction(nameof(Index));
             }
         }
         [HttpPost]
-        public ActionResult Eliminar(Cabeza entidad)
+        public ActionResult Eliminar(Cara entidad)
         {
             try
             {
@@ -109,7 +110,8 @@ public IActionResult ObtenerTodas()
             }
             catch (Exception ex)
             {
-                throw;
+                 ModelState.AddModelError("", "Error al eliminar la Cara: " + ex.Message);
+                 return RedirectToAction(nameof(Index));
             }
         }
 
@@ -118,11 +120,12 @@ public IActionResult ObtenerTodas()
             try
             {
                 var entidad = repositorio.ObtenerPorId(id);
-                return View(entidad);//pasa el modelo a la vista
+                return View(entidad);
             }
             catch (Exception ex)
-            {//poner breakpoints para detectar errores
-                throw;
+            {
+                  ModelState.AddModelError("", "Error al cargar la vista " + ex.Message);
+                 return RedirectToAction(nameof(Index));
             }
         }
         [HttpPost]
@@ -132,8 +135,8 @@ public IActionResult ObtenerTodas()
         {
 
             Cara c = null;
-            // try
-            // {
+            try
+            {
             c = repositorio.ObtenerPorId(id);
 
             c.Nombre = entidad.Nombre;
@@ -163,11 +166,12 @@ public IActionResult ObtenerTodas()
             repositorio.Modificacion(c);
             TempData["Mensaje"] = "Datos guardados correctamente";
             return RedirectToAction(nameof(Index));
-            // }
-            // catch (Exception ex)
-            // {
-            // 	throw;
-            // }
+            }
+            catch (Exception ex)
+            {
+            	  ModelState.AddModelError("", "Error al editar la Cara: " + ex.Message);
+                 return RedirectToAction(nameof(Index));
+            }
         }
 
 

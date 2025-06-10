@@ -10,33 +10,38 @@ using Microsoft.AspNetCore.Mvc;
 using juegoCartas_net.Models;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 namespace juegoCartas_net.Api
 {
-    [Route("api/[controller]")]
-    public class UsuariosController : Controller
-    {
-        private readonly IConfiguration configuration;
-        private readonly IWebHostEnvironment environment;
-        private readonly IRepositorioUsuario repositorio;
-        private readonly IRepositorioCarta repoCarta;
-    
+	[Route("api/[controller]")]
+	[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+	public class UsuariosController : Controller
+	{
+		private readonly IConfiguration configuration;
+		private readonly IWebHostEnvironment environment;
+		private readonly IRepositorioUsuario repositorio;
+		private readonly IRepositorioCarta repoCarta;
+		private readonly IRepositorioEnfrentamiento repoEnfrentamiento;
 
-        public UsuariosController(IConfiguration configuration, IWebHostEnvironment environment, IRepositorioUsuario repositorio, IRepositorioCarta repoCarta)
-        {
-            this.configuration = configuration;
-            this.environment = environment;
-            this.repositorio = repositorio;
-            this.repoCarta = repoCarta;
-         
-            
-        }
-       
-        
- 
-      	[HttpPost("login")]
+
+		public UsuariosController(IConfiguration configuration, IWebHostEnvironment environment,
+		 IRepositorioUsuario repositorio, IRepositorioCarta repoCarta, IRepositorioEnfrentamiento repoEnfrentamiento)
+		{
+			this.configuration = configuration;
+			this.environment = environment;
+			this.repositorio = repositorio;
+			this.repoCarta = repoCarta;
+			this.repoEnfrentamiento = repoEnfrentamiento;
+
+
+		}
+
+
+
+		[HttpPost("login")]
 		[AllowAnonymous]
-		public async Task<IActionResult> Login([FromForm] LoginView login)
+		public IActionResult Login([FromForm] LoginView login)
 		{
 			try
 			{
@@ -46,7 +51,7 @@ namespace juegoCartas_net.Api
 					prf: KeyDerivationPrf.HMACSHA1,
 					iterationCount: 1000,
 					numBytesRequested: 256 / 8));
-			    var p = repositorio.ObtenerPorEmail(login.Usuario);
+				var p = repositorio.ObtenerPorEmail(login.Usuario);
 				if (p == null || p.Clave != hashed)
 				{
 					return BadRequest("Nombre de usuario o clave incorrecta");
@@ -70,7 +75,9 @@ namespace juegoCartas_net.Api
 						expires: DateTime.Now.AddMinutes(60),
 						signingCredentials: credenciales
 					);
-					return Ok(new JwtSecurityTokenHandler().WriteToken(token));
+
+					var stringToken = new JwtSecurityTokenHandler().WriteToken(token);
+					return Json(new { access_token = stringToken });
 				}
 			}
 			catch (Exception ex)
@@ -80,6 +87,18 @@ namespace juegoCartas_net.Api
 		}
 
 
-    }
+		[Route("resultadosEnfrentamientos")]
+		public IActionResult ResultadosPorUsuario()
+		{
+			var usuarioActual = repositorio.ObtenerPorEmail(User.Identity.Name);
+
+			var resultado = repoEnfrentamiento.ObtenerResultadosJson(usuarioActual.Id);
+			return Json(new
+			{
+				resultadoJson = resultado,
+
+			});
+		}
+	}
 }
 
